@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TripZen — Travel Smarter</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #ffb703;
+  --gold-dark: #e09800;
+  --bg: #080c14;
+  --bg2: #0d1422;
+  --bg3: #111927;
+  --surface: rgba(255,255,255,0.04);
+  --border: rgba(255,255,255,0.07);
+  --text: #f0ede8;
+  --muted: #7a8499;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* ── NOISE TEXTURE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.6;
+}
+
+/* ── NAVBAR ── */
+.navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 48px;
+  height: 72px;
+  background: rgba(8,12,20,0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+
+.logo-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  color: var(--text);
+  letter-spacing: 0.02em;
+}
+.logo-text span { color: var(--gold); }
+
+nav { display: flex; gap: 36px; align-items: center; }
+nav a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  transition: color 0.2s;
+}
+nav a:hover { color: var(--text); }
+nav a.cta {
+  color: var(--bg);
+  background: var(--gold);
+  padding: 8px 20px;
+  border-radius: 100px;
+  font-weight: 500;
+  color: #080c14;
+  transition: background 0.2s, transform 0.2s;
+}
+nav a.cta:hover { background: var(--gold-dark); transform: translateY(-1px); }
+
+/* ── HERO ── */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 120px 24px 80px;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600&q=80") center/cover no-repeat;
+  filter: brightness(0.25) saturate(0.6);
+  z-index: -2;
+}
+
+.hero-glow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 80%, rgba(255,183,3,0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 20% 20%, rgba(255,183,3,0.06) 0%, transparent 60%);
+  z-index: -1;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,183,3,0.1);
+  border: 1px solid rgba(255,183,3,0.2);
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 6px 16px;
+  border-radius: 100px;
+  margin-bottom: 32px;
+  animation: fadeUp 0.8s ease both;
+}
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(42px, 7vw, 88px);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  max-width: 800px;
+  margin-bottom: 24px;
+  animation: fadeUp 0.8s 0.1s ease both;
+}
+
+.hero h1 em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.hero p {
+  font-size: 18px;
+  color: var(--muted);
+  max-width: 480px;
+  line-height: 1.7;
+  margin-bottom: 48px;
+  animation: fadeUp 0.8s 0.2s ease both;
+}
+
+.hero-btns {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  animation: fadeUp 0.8s 0.3s ease both;
+}
+
+.btn-primary {
+  background: var(--gold);
+  color: #080c14;
+  padding: 14px 32px;
+  border-radius: 100px;
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+.btn-primary:hover {
+  background: var(--gold-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(255,183,3,0.3);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text);
+  padding: 14px 32px;
+  border-radius: 100px;
+  font-size: 15px;
+  font-weight: 400;
+  text-decoration: none;
+  border: 1px solid var(--border);
+  transition: border-color 0.2s, background 0.2s;
+}
+.btn-ghost:hover {
+  border-color: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.04);
+}
+
+/* ── STATS STRIP ── */
+.stats-strip {
+  display: flex;
+  justify-content: center;
+  gap: 64px;
+  flex-wrap: wrap;
+  margin-top: 72px;
+  padding-top: 48px;
+  border-top: 1px solid var(--border);
+  animation: fadeUp 0.8s 0.4s ease both;
+}
+.stat { text-align: center; }
+.stat-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 36px;
+  color: var(--gold);
+  line-height: 1;
+}
+.stat-label {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 6px;
+  letter-spacing: 0.04em;
+}
+
+/* ── SERVICES ── */
+.services {
+  padding: 100px 48px;
+  position: relative;
+  z-index: 1;
+}
+
+.section-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(28px, 4vw, 46px);
+  font-weight: 700;
+  line-height: 1.15;
+  max-width: 480px;
+  margin-bottom: 56px;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.service-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px 24px;
+  transition: border-color 0.3s, background 0.3s, transform 0.3s;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.service-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transition: transform 0.3s;
+}
+.service-card:hover {
+  border-color: rgba(255,183,3,0.2);
+  background: rgba(255,183,3,0.04);
+  transform: translateY(-4px);
+}
+.service-card:hover::after { transform: scaleX(1); }
+
+.service-icon {
+  font-size: 28px;
+  margin-bottom: 16px;
+  display: block;
+}
+.service-name {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+.service-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ── PACKAGES ── */
+.packages {
+  padding: 0 48px 100px;
+  position: relative;
+  z-index: 1;
+}
+
+.packages-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.packages-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.pkg-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+}
+.pkg-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+
+.pkg-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  transition: transform 0.5s;
+  display: block;
+}
+.pkg-card:hover .pkg-img { transform: scale(1.06); }
+
+.pkg-img-placeholder {
+  width: 100%;
+  height: 180px;
+  background: linear-gradient(135deg, #1a2540, #0d1422);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+}
+
+.pkg-body { padding: 20px; }
+.pkg-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: rgba(255,183,3,0.1);
+  padding: 3px 10px;
+  border-radius: 100px;
+  margin-bottom: 10px;
+}
+.pkg-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  margin-bottom: 6px;
+}
+.pkg-duration {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+.pkg-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.pkg-price {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--gold);
+}
+.pkg-price span {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 400;
+}
+.pkg-btn {
+  background: var(--gold);
+  color: #080c14;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: background 0.2s, transform 0.2s;
+}
+.pkg-btn:hover { background: var(--gold-dark); transform: scale(1.04); }
+
+/* ── ZENO AI FEATURE ── */
+.zeno-section {
+  margin: 0 48px 100px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.zeno-left {
+  padding: 56px 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.zeno-left .section-title { margin-bottom: 20px; max-width: none; }
+.zeno-left p {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.8;
+  margin-bottom: 32px;
+}
+
+.zeno-right {
+  background: var(--bg3);
+  border-left: 1px solid var(--border);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.zeno-right::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 60% at 50% 0%, rgba(255,183,3,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.chat-bubble {
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.55;
+  max-width: 88%;
+  animation: fadeUp 0.4s ease both;
+}
+.chat-bubble.ai {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  border-top-left-radius: 4px;
+}
+.chat-bubble.user {
+  background: var(--gold);
+  color: #080c14;
+  font-weight: 500;
+  margin-left: auto;
+  border-top-right-radius: 4px;
+}
+.chat-sender {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 4px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+/* ── WHY TRIPZEN ── */
+.why-section {
+  padding: 0 48px 100px;
+  position: relative;
+  z-index: 1;
+}
+.why-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 48px;
+}
+.why-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 36px 28px;
+}
+.why-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 48px;
+  color: rgba(255,183,3,0.15);
+  line-height: 1;
+  margin-bottom: 16px;
+}
+.why-title {
+  font-size: 17px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+.why-desc {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+/* ── TESTIMONIALS ── */
+.testi-section {
+  padding: 0 48px 100px;
+  position: relative;
+  z-index: 1;
+}
+.testi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 48px;
+}
+.testi-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px;
+}
+.testi-stars { color: var(--gold); font-size: 14px; margin-bottom: 14px; }
+.testi-text {
+  font-size: 15px;
+  line-height: 1.7;
+  margin-bottom: 20px;
+  font-style: italic;
+  color: #c8c4bc;
+}
+.testi-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.testi-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255,183,3,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+.testi-name { font-size: 14px; font-weight: 500; }
+.testi-city { font-size: 12px; color: var(--muted); }
+
+/* ── CTA BANNER ── */
+.cta-banner {
+  margin: 0 48px 100px;
+  background: var(--gold);
+  border-radius: 24px;
+  padding: 64px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+.cta-banner::before {
+  content: '✈';
+  position: absolute;
+  right: 48px;
+  top: 50%;
+  transform: translateY(-50%) rotate(-20deg);
+  font-size: 140px;
+  opacity: 0.08;
+  pointer-events: none;
+}
+.cta-banner h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 36px;
+  color: #080c14;
+  line-height: 1.2;
+}
+.cta-banner p { color: rgba(8,12,20,0.6); font-size: 15px; margin-top: 8px; }
+.btn-dark {
+  background: #080c14;
+  color: var(--gold);
+  padding: 14px 32px;
+  border-radius: 100px;
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+.btn-dark:hover { background: #141c2e; }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 40px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  position: relative;
+  z-index: 1;
+}
+footer p { font-size: 13px; color: var(--muted); }
+.footer-links { display: flex; gap: 24px; }
+.footer-links a {
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--text); }
+
+/* ── WHATSAPP ── */
+.whatsapp-btn {
+  position: fixed;
+  bottom: 28px; right: 28px;
+  background: #25D366;
+  color: white;
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  text-decoration: none;
+  box-shadow: 0 4px 20px rgba(37,211,102,0.4);
+  z-index: 999;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.whatsapp-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 28px rgba(37,211,102,0.5);
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .navbar { padding: 0 20px; }
+  .services-grid, .packages-grid { grid-template-columns: repeat(2, 1fr); }
+  .zeno-section { grid-template-columns: 1fr; }
+  .zeno-right { border-left: none; border-top: 1px solid var(--border); }
+  .why-grid, .testi-grid { grid-template-columns: 1fr; }
+  .services, .packages, .why-section, .testi-section { padding-left: 20px; padding-right: 20px; }
+  .zeno-section, .cta-banner { margin-left: 20px; margin-right: 20px; }
+  footer { padding: 32px 20px; }
+  nav { gap: 16px; }
+  nav a:not(.cta) { display: none; }
+  .stats-strip { gap: 32px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar">
+  <div class="logo-text">Trip<span>Zen</span></div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="packages.html">Packages</a>
+    <a href="ai-planner.html">Zeno AI</a>
+    <a href="contact.html">Contact</a>
+    <a href="login.html" class="cta">Login</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-glow"></div>
+
+  <div class="hero-badge">✈ India's Smartest Travel Platform</div>
+
+  <h1>Travel the World,<br><em>Your Way</em></h1>
+
+  <p>AI-powered trip planning, unbeatable packages, and zero hassle. From Goa beaches to Bali sunsets.</p>
+
+  <div class="hero-btns">
+    <a href="packages.html" class="btn-primary">Explore Packages</a>
+    <a href="ai-planner.html" class="btn-ghost">Try Zeno AI ✨</a>
+  </div>
+
+  <div class="stats-strip">
+    <div class="stat">
+      <div class="stat-num">12K+</div>
+      <div class="stat-label">Happy Travelers</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">48</div>
+      <div class="stat-label">Destinations</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">4.9★</div>
+      <div class="stat-label">Average Rating</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">₹0</div>
+      <div class="stat-label">Booking Fees</div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services reveal">
+  <div class="section-label">What We Offer</div>
+  <div class="section-title">Everything you need<br>for the perfect trip</div>
+
+  <div class="services-grid">
+    <div class="service-card">
+      <span class="service-icon">✈</span>
+      <div class="service-name">Flights</div>
+      <div class="service-desc">Best fares on domestic & international routes, curated daily.</div>
+    </div>
+    <div class="service-card">
+      <span class="service-icon">🏨</span>
+      <div class="service-name">Hotels</div>
+      <div class="service-desc">Handpicked stays — from budget gems to luxury resorts.</div>
+    </div>
+    <div class="service-card">
+      <span class="service-icon">🚆</span>
+      <div class="service-name">Trains</div>
+      <div class="service-desc">Rail journeys across India, booked fast and hassle-free.</div>
+    </div>
+    <div class="service-card">
+      <span class="service-icon">🚖</span>
+      <div class="service-name">Cabs</div>
+      <div class="service-desc">Airport transfers and city rides, always on time.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PACKAGES -->
+<section class="packages reveal">
+  <div class="packages-header">
+    <div>
+      <div class="section-label">Hot Deals</div>
+      <div class="section-title" style="margin-bottom:0">🔥 Latest Tour Packages</div>
+    </div>
+    <a href="packages.html" class="btn-ghost" style="font-size:14px">View All →</a>
+  </div>
+
+  <div class="packages-grid" id="homePackages">
+    <!-- JS se load hoga -->
+    <div class="pkg-card">
+      <div class="pkg-img-placeholder">🌴</div>
+      <div class="pkg-body">
+        <div class="pkg-tag">Domestic</div>
+        <div class="pkg-name">Goa Tour</div>
+        <div class="pkg-duration">3 Days / 2 Nights</div>
+        <div class="pkg-footer">
+          <div class="pkg-price">₹7,999 <span>/ person</span></div>
+          <button class="pkg-btn" onclick="bookNow('goa','Goa Tour',7999)">Book Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="pkg-card">
+      <div class="pkg-img-placeholder">🏔</div>
+      <div class="pkg-body">
+        <div class="pkg-tag">Domestic</div>
+        <div class="pkg-name">Manali Trip</div>
+        <div class="pkg-duration">5 Days / 4 Nights</div>
+        <div class="pkg-footer">
+          <div class="pkg-price">₹12,999 <span>/ person</span></div>
+          <button class="pkg-btn" onclick="bookNow('manali','Manali Trip',12999)">Book Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="pkg-card">
+      <div class="pkg-img-placeholder">🏝</div>
+      <div class="pkg-body">
+        <div class="pkg-tag">International</div>
+        <div class="pkg-name">Bali Escape</div>
+        <div class="pkg-duration">6 Days / 5 Nights</div>
+        <div class="pkg-footer">
+          <div class="pkg-price">₹49,999 <span>/ person</span></div>
+          <button class="pkg-btn" onclick="bookNow('bali','Bali Escape',49999)">Book Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="pkg-card">
+      <div class="pkg-img-placeholder">🏜</div>
+      <div class="pkg-body">
+        <div class="pkg-tag">International</div>
+        <div class="pkg-name">Dubai Tour</div>
+        <div class="pkg-duration">5 Days / 4 Nights</div>
+        <div class="pkg-footer">
+          <div class="pkg-price">₹39,999 <span>/ person</span></div>
+          <button class="pkg-btn" onclick="bookNow('dubai','Dubai Tour',39999)">Book Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ZENO AI -->
+<section class="zeno-section reveal">
+  <div class="zeno-left">
+    <div class="section-label">AI Travel Planner</div>
+    <div class="section-title">Meet <em style="color:var(--gold);font-style:italic">Zeno</em> —<br>Your Travel Expert</div>
+    <p>Ask your travel questions in plain English. Zeno builds the perfect itinerary based on your budget, dates, and vibe — 24/7.</p>
+    <a href="ai-planner.html" class="btn-primary" style="align-self:flex-start">Chat with Zeno ✨</a>
+  </div>
+  <div class="zeno-right">
+    <div>
+      <div class="chat-sender">You</div>
+      <div class="chat-bubble user">Plan a 5-day Manali trip, budget ₹15,000</div>
+    </div>
+    <div>
+      <div class="chat-sender">🤖 Zeno</div>
+      <div class="chat-bubble ai">
+        <strong style="color:var(--gold)">Manali 5-Day Plan</strong> ✈<br><br>
+        Day 1 — Delhi se Volvo bus (₹800–1200)<br>
+        Day 2 — Old Manali, Hadimba Temple 🏔<br>
+        Day 3 — Solang Valley, snow activities<br>
+        Day 4 — Rohtang Pass (if open)<br>
+        Day 5 — Return journey<br><br>
+        <em style="color:var(--muted);font-size:13px">Total est. cost: ₹12,500–14,000 ✅</em>
+      </div>
+    </div>
+    <div>
+      <div class="chat-sender">You</div>
+      <div class="chat-bubble user">Best time to visit?</div>
+    </div>
+    <div>
+      <div class="chat-sender">🤖 Zeno</div>
+      <div class="chat-bubble ai">October–November or March–June is best! ❄ Avoid monsoon (July–Aug) for Rohtang Pass.</div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY TRIPZEN -->
+<section class="why-section reveal">
+  <div class="section-label">Why TripZen</div>
+  <div class="section-title">Travel smarter,<br>not harder</div>
+
+  <div class="why-grid">
+    <div class="why-card">
+      <div class="why-num">01</div>
+      <div class="why-title">🤖 AI-Powered Planning</div>
+      <div class="why-desc">Zeno is your personal AI travel advisor — ask anything, get an instant itinerary.</div>
+    </div>
+    <div class="why-card">
+      <div class="why-num">02</div>
+      <div class="why-title">💰 Unbeatable Prices</div>
+      <div class="why-desc">Direct deals, zero commission. India's most affordable travel packages, guaranteed.</div>
+    </div>
+    <div class="why-card">
+      <div class="why-num">03</div>
+      <div class="why-title">📞 24/7 Support</div>
+      <div class="why-desc">Any issue — call us or WhatsApp us. We're always available for you, 24/7.</div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testi-section reveal">
+  <div class="section-label">Reviews</div>
+  <div class="section-title">What Our Customers<br>Are Saying</div>
+
+  <div class="testi-grid">
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">"Zeno planned our entire Goa trip in 10 minutes! So easy and affordable — never had an experience like this."</div>
+      <div class="testi-author">
+        <div class="testi-avatar">👩</div>
+        <div>
+          <div class="testi-name">Priya Sharma</div>
+          <div class="testi-city">Mumbai</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">"The Manali package was perfectly within budget. The hotel was great too. TripZen is totally worth it!"</div>
+      <div class="testi-author">
+        <div class="testi-avatar">👨</div>
+        <div>
+          <div class="testi-name">Rahul Verma</div>
+          <div class="testi-city">Delhi</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">"Bali for our honeymoon — best decision ever! TripZen handled everything, we just enjoyed 😍"</div>
+      <div class="testi-author">
+        <div class="testi-avatar">👫</div>
+        <div>
+          <div class="testi-name">Neha & Arjun</div>
+          <div class="testi-city">Pune</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<div class="cta-banner reveal">
+  <div>
+    <h2>Plan Your Next<br>Adventure Today</h2>
+    <p>Chat with Zeno — free, right now</p>
+  </div>
+  <a href="ai-planner.html" class="btn-dark">Start Planning →</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="logo-text" style="font-size:18px;margin-bottom:4px">Trip<span>Zen</span></div>
+    <p>© 2026 TripZen. Plan Smart. Travel Easy.</p>
+  </div>
+  <div class="footer-links">
+    <a href="packages.html">Packages</a>
+    <a href="ai-planner.html">Zeno AI</a>
+    <a href="contact.html">Contact</a>
+    <a href="login.html">Login</a>
+  </div>
+</footer>
+
+<!-- WHATSAPP -->
+<a href="https://wa.me/919999999999" class="whatsapp-btn" target="_blank">💬</a>
+
+<script>
+// Navbar login state
+function updateNavbar() {
+  const token = localStorage.getItem("token");
+  const name = localStorage.getItem("userName");
+  const loginLink = document.querySelector('nav a.cta');
+  if (loginLink && token) {
+    loginLink.textContent = name ? name.split(" ")[0] : "Profile";
+    loginLink.href = "profile.html";
+  }
+}
+
+// Book now
+function bookNow(id, name, price) {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Please login first!");
+    window.location.href = "login.html";
+    return;
+  }
+  window.location.href = `payment.html?id=${id}&name=${encodeURIComponent(name)}&price=${price}`;
+}
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+window.onload = updateNavbar;
+</script>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Us — TripZen</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root { --gold:#ffb703; --gold-dark:#e09800; --bg:#080c14; --bg2:#0d1422; --bg3:#111927; --surface:rgba(255,255,255,0.04); --border:rgba(255,255,255,0.07); --text:#f0ede8; --muted:#7a8499; }
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:0.6;}
+.navbar{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:72px;background:rgba(8,12,20,0.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
+.logo-text{font-family:'Playfair Display',serif;font-size:22px;color:var(--text);letter-spacing:0.02em;text-decoration:none;}
+.logo-text span{color:var(--gold);}
+nav{display:flex;gap:36px;align-items:center;}
+nav a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:400;letter-spacing:0.03em;transition:color 0.2s;}
+nav a:hover,nav a.active{color:var(--text);}
+nav a.cta{color:#080c14;background:var(--gold);padding:8px 20px;border-radius:100px;font-weight:500;transition:background 0.2s,transform 0.2s;}
+nav a.cta:hover{background:var(--gold-dark);transform:translateY(-1px);}
+
+.page-hero{position:relative;padding:140px 48px 80px;text-align:center;overflow:hidden;z-index:1;}
+.page-hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 100%,rgba(255,183,3,0.08) 0%,transparent 70%);z-index:-1;}
+.page-hero-label{font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;display:block;}
+.page-hero h1{font-family:'Playfair Display',serif;font-size:clamp(32px,5vw,60px);font-weight:700;line-height:1.1;margin-bottom:16px;}
+.page-hero h1 em{font-style:italic;color:var(--gold);}
+.page-hero p{font-size:16px;color:var(--muted);max-width:480px;margin:0 auto;line-height:1.7;}
+
+.contact-section{padding:0 48px 100px;display:grid;grid-template-columns:1fr 1.4fr;gap:40px;max-width:1100px;margin:0 auto;position:relative;z-index:1;}
+
+.contact-info{display:flex;flex-direction:column;gap:20px;}
+.contact-card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:28px;transition:border-color 0.3s;}
+.contact-card:hover{border-color:rgba(255,183,3,0.2);}
+.contact-card-icon{font-size:24px;margin-bottom:14px;display:block;}
+.contact-card-label{font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.contact-card-value{font-size:16px;font-weight:500;color:var(--text);}
+.contact-card-sub{font-size:13px;color:var(--muted);margin-top:4px;}
+.whatsapp-card{background:linear-gradient(135deg,rgba(37,211,102,0.1),rgba(37,211,102,0.05));border-color:rgba(37,211,102,0.2);}
+.wa-btn{display:inline-flex;align-items:center;gap:8px;background:#25D366;color:white;padding:10px 20px;border-radius:100px;font-size:14px;font-weight:500;text-decoration:none;margin-top:14px;transition:transform 0.2s,box-shadow 0.2s;}
+.wa-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(37,211,102,0.3);}
+
+.contact-form-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:24px;padding:40px;}
+.form-title{font-family:'Playfair Display',serif;font-size:24px;margin-bottom:6px;}
+.form-sub{font-size:14px;color:var(--muted);margin-bottom:32px;line-height:1.6;}
+.form-group{margin-bottom:20px;}
+.form-label{font-size:12px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:block;}
+.form-input,.form-textarea{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:14px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
+.form-input:focus,.form-textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(255,183,3,0.1);}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--muted);}
+.form-textarea{resize:vertical;min-height:120px;line-height:1.6;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.submit-btn{width:100%;background:var(--gold);color:#080c14;border:none;padding:15px 32px;border-radius:100px;font-size:15px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.2s,transform 0.2s,box-shadow 0.2s;margin-top:8px;}
+.submit-btn:hover{background:var(--gold-dark);transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,183,3,0.3);}
+.submit-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none;}
+.form-msg{margin-top:16px;font-size:14px;text-align:center;padding:12px;border-radius:10px;display:none;}
+.form-msg.success{background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.2);color:#4ade80;}
+.form-msg.error{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.2);color:#f87171;}
+
+footer{border-top:1px solid var(--border);padding:40px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;position:relative;z-index:1;}
+footer p{font-size:13px;color:var(--muted);}
+.footer-links{display:flex;gap:24px;}
+.footer-links a{font-size:13px;color:var(--muted);text-decoration:none;transition:color 0.2s;}
+.footer-links a:hover{color:var(--text);}
+.whatsapp-btn{position:fixed;bottom:28px;right:28px;background:#25D366;color:white;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;text-decoration:none;box-shadow:0 4px 20px rgba(37,211,102,0.4);z-index:999;transition:transform 0.3s;}
+.whatsapp-btn:hover{transform:scale(1.1);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease,transform 0.6s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+@media(max-width:900px){
+  .navbar{padding:0 20px;} nav a:not(.cta){display:none;}
+  .contact-section{grid-template-columns:1fr;padding:0 20px 60px;}
+  .page-hero{padding:120px 20px 48px;}
+  .form-row{grid-template-columns:1fr;}
+  footer{padding:32px 20px;}
+}
+</style>
+</head>
+<body>
+
+<header class="navbar">
+  <a href="index.html" class="logo-text">Trip<span>Zen</span></a>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="packages.html">Packages</a>
+    <a href="ai-planner.html">Zeno AI</a>
+    <a href="contact.html" class="active">Contact</a>
+    <a href="login.html" class="cta" id="navLoginBtn">Login</a>
+  </nav>
+</header>
+
+<section class="page-hero">
+  <div class="page-hero-bg"></div>
+  <span class="page-hero-label">📞 Get In Touch</span>
+  <h1>We Are<br><em>Here</em> For You</h1>
+  <p>Have a question, suggestion, or need booking help? We're available 24/7 for you.</p>
+</section>
+
+<section class="contact-section reveal">
+  <!-- LEFT: Contact Info -->
+  <div class="contact-info">
+    <div class="contact-card">
+      <span class="contact-card-icon">📞</span>
+      <div class="contact-card-label">Phone</div>
+      <div class="contact-card-value">+91 78218 81456</div>
+      <div class="contact-card-sub">Mon–Sun, 9 AM – 9 PM</div>
+    </div>
+    <div class="contact-card">
+      <span class="contact-card-icon">📧</span>
+      <div class="contact-card-label">Email</div>
+      <div class="contact-card-value">tripzen@gmail.com</div>
+      <div class="contact-card-sub">Reply within 2–4 hours</div>
+    </div>
+    <div class="contact-card">
+      <span class="contact-card-icon">📍</span>
+      <div class="contact-card-label">Office</div>
+      <div class="contact-card-value">Nagpur, Maharashtra</div>
+      <div class="contact-card-sub">India — 440001</div>
+    </div>
+    <div class="contact-card whatsapp-card">
+      <span class="contact-card-icon">💬</span>
+      <div class="contact-card-label">Quick Response</div>
+      <div class="contact-card-value">WhatsApp Chat</div>
+      <div class="contact-card-sub">Sabse fast — usually reply in minutes</div>
+      <a href="https://wa.me/917821881456" class="wa-btn" target="_blank">
+        💬 Chat on WhatsApp
+      </a>
+    </div>
+  </div>
+
+  <!-- RIGHT: Contact Form -->
+  <div class="contact-form-wrap">
+    <div class="form-title">Send us a Message</div>
+    <div class="form-sub">Send us your message — we'll reply quickly ✅</div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Your Name *</label>
+        <input type="text" class="form-input" id="cName" placeholder="Your name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Phone Number</label>
+        <input type="tel" class="form-input" id="cPhone" placeholder="+91 XXXXX XXXXX">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Email Address</label>
+      <input type="email" class="form-input" id="cEmail" placeholder="your@email.com">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Subject</label>
+      <input type="text" class="form-input" id="cSubject" placeholder="e.g. Goa trip booking query">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Message *</label>
+      <textarea class="form-textarea" id="cMessage" placeholder="Write your message here..."></textarea>
+    </div>
+
+    <button class="submit-btn" id="sendBtn" onclick="sendContact()">Send Message ✈</button>
+    <div class="form-msg" id="formMsg"></div>
+  </div>
+</section>
+
+<footer>
+  <div>
+    <a href="index.html" class="logo-text" style="font-size:18px;margin-bottom:4px;display:block">Trip<span>Zen</span></a>
+    <p>© 2026 TripZen. Plan Smart. Travel Easy.</p>
+  </div>
+  <div class="footer-links">
+    <a href="packages.html">Packages</a>
+    <a href="ai-planner.html">Zeno AI</a>
+    <a href="contact.html">Contact</a>
+    <a href="login.html">Login</a>
+  </div>
+</footer>
+
+<a href="https://wa.me/917821881456" class="whatsapp-btn" target="_blank">💬</a>
+
+<script>
+const API = "http://localhost:5000";
+
+async function sendContact() {
+  const name = document.getElementById("cName").value.trim();
+  const email = document.getElementById("cEmail").value.trim();
+  const message = document.getElementById("cMessage").value.trim();
+  const btn = document.getElementById("sendBtn");
+  const msg = document.getElementById("formMsg");
+
+  if (!name || !message) {
+    msg.style.display = "block"; msg.className = "form-msg error";
+    msg.textContent = "⚠️ Name and message are required!"; return;
+  }
+
+  btn.disabled = true; btn.textContent = "Sending...";
+  msg.style.display = "none";
+
+  try {
+    const res = await fetch(`${API}/api/contact`, {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ name, email, message })
+    });
+    if (res.ok) {
+      msg.style.display="block"; msg.className="form-msg success";
+      msg.textContent = "✅ Message sent! We'll reply shortly.";
+      document.getElementById("cName").value = "";
+      document.getElementById("cEmail").value = "";
+      document.getElementById("cMessage").value = "";
+      document.getElementById("cSubject").value = "";
+    } else throw new Error();
+  } catch {
+    msg.style.display="block"; msg.className="form-msg error";
+    msg.textContent="⚡ Or message us directly on WhatsApp — fastest response!";
+    setTimeout(()=>window.open(`https://wa.me/917821881456?text=Hi TripZen! Name: ${name}%0AMessage: ${message}`),1000);
+  }
+  btn.disabled=false; btn.textContent="Send Message ✈";
+}
+
+function updateNavbar() {
+  const token=localStorage.getItem("token"),name=localStorage.getItem("userName");
+  const btn=document.getElementById("navLoginBtn");
+  if(btn&&token){btn.textContent=name?name.split(" ")[0]:"Profile";btn.href="profile.html";}
+}
+
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}}),{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+window.onload=updateNavbar;
+</script>
+</body>
+</html>

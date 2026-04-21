@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Complete Payment — TripZen</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<style>
+:root{--gold:#ffb703;--gold-dark:#e09800;--bg:#080c14;--bg2:#0d1422;--bg3:#111927;--surface:rgba(255,255,255,0.04);--border:rgba(255,255,255,0.07);--text:#f0ede8;--muted:#7a8499;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:0.6;}
+.navbar{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:72px;background:rgba(8,12,20,0.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
+.logo-text{font-family:'Playfair Display',serif;font-size:22px;color:var(--text);text-decoration:none;}
+.logo-text span{color:var(--gold);}
+.pay-wrap{width:100%;max-width:460px;position:relative;z-index:1;padding:100px 20px 40px;}
+.pay-card{background:var(--bg2);border:1px solid var(--border);border-radius:28px;padding:36px;text-align:center;}
+.pay-pkg-emoji{font-size:52px;margin-bottom:12px;}
+.pay-pkg-name{font-family:'Playfair Display',serif;font-size:24px;margin-bottom:4px;}
+.pay-pkg-meta{font-size:13px;color:var(--muted);margin-bottom:28px;}
+.pay-amount-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.pay-amount{font-size:48px;font-weight:700;color:var(--gold);letter-spacing:-1px;margin-bottom:4px;}
+.pay-per-person{font-size:12px;color:var(--muted);margin-bottom:28px;}
+.pay-includes{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:28px;}
+.pay-tag{font-size:11px;background:var(--surface);border:1px solid var(--border);padding:4px 12px;border-radius:100px;color:var(--muted);}
+.divider{border:none;border-top:1px solid var(--border);margin:24px 0;}
+.pay-method-row{display:flex;justify-content:center;gap:12px;margin-bottom:24px;flex-wrap:wrap;}
+.pay-method{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);}
+.pay-method span:first-child{font-size:16px;}
+.pay-btn{width:100%;background:var(--gold);color:#080c14;border:none;padding:18px;border-radius:100px;font-size:16px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;margin-bottom:12px;}
+.pay-btn:hover{background:var(--gold-dark);transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,183,3,0.3);}
+.pay-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none;}
+.back-link{font-size:13px;color:var(--muted);text-decoration:none;display:block;text-align:center;transition:color 0.2s;}
+.back-link:hover{color:var(--gold);}
+.secure-note{font-size:11px;color:var(--muted);margin-top:12px;display:flex;align-items:center;justify-content:center;gap:4px;}
+/* SUCCESS */
+.success-card{display:none;text-align:center;padding:12px;}
+.success-icon{font-size:64px;margin-bottom:16px;}
+.success-title{font-family:'Playfair Display',serif;font-size:28px;margin-bottom:8px;}
+.success-sub{font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.7;}
+.ref-pill{display:inline-block;background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.2);color:#4ade80;padding:8px 20px;border-radius:100px;font-size:13px;font-weight:500;letter-spacing:0.05em;margin-bottom:20px;}
+.success-btns{display:flex;flex-direction:column;gap:10px;}
+</style>
+</head>
+<body>
+<header class="navbar">
+  <a href="index.html" class="logo-text">Trip<span>Zen</span></a>
+  <nav style="display:flex;gap:20px;align-items:center;">
+    <a href="packages.html" style="color:var(--muted);text-decoration:none;font-size:14px;">Packages</a>
+    <a href="profile.html" style="color:#080c14;background:var(--gold);padding:8px 20px;border-radius:100px;font-size:14px;font-weight:500;text-decoration:none;">Profile</a>
+  </nav>
+</header>
+
+<div class="pay-wrap">
+  <!-- PAYMENT CARD -->
+  <div class="pay-card" id="payCard">
+    <div class="pay-pkg-emoji" id="payEmoji">🌍</div>
+    <div class="pay-pkg-name" id="payName">Loading...</div>
+    <div class="pay-pkg-meta" id="payMeta"></div>
+    <div class="pay-amount-label">Total Amount</div>
+    <div class="pay-amount" id="payAmt">₹0</div>
+    <div class="pay-per-person" id="payPerPerson"></div>
+    <div class="pay-includes">
+      <span class="pay-tag">✓ Hotels</span>
+      <span class="pay-tag">✓ Transfers</span>
+      <span class="pay-tag">✓ Sightseeing</span>
+      <span class="pay-tag">✓ GST Included</span>
+    </div>
+    <div class="divider"></div>
+    <div class="pay-method-row">
+      <div class="pay-method"><span>💳</span> Cards</div>
+      <div class="pay-method"><span>📱</span> UPI</div>
+      <div class="pay-method"><span>🏦</span> Net Banking</div>
+      <div class="pay-method"><span>📲</span> Wallets</div>
+    </div>
+    <button class="pay-btn" id="payBtn" onclick="initiatePayment()">Pay Now</button>
+    <a href="booking.html" class="back-link">← Go back and modify</a>
+    <div class="secure-note">🔒 100% Secure · Powered by Razorpay</div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="pay-card" id="successCard" style="display:none;">
+    <div class="success-icon">🎉</div>
+    <div class="success-title">Payment Successful!</div>
+    <div class="success-sub">Your booking is confirmed.<br>Check your email for the itinerary.</div>
+    <div class="ref-pill" id="refPill">REF: TZ-000000</div>
+    <div class="success-btns">
+      <button class="pay-btn" onclick="window.location.href='profile.html'">View My Bookings</button>
+      <a href="packages.html" class="back-link">Explore More Packages</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = "http://localhost:5000";
+const RAZORPAY_KEY = "rzp_test_XXXXXXXXXXXX"; // Replace with your Razorpay key
+const PKG_EMOJIS = {goa:"🌴",manali:"🏔",bali:"🏝",dubai:"🏙",kerala:"🌿",shimla:"⛄",thailand:"🐘",rajasthan:"🏰"};
+
+const params = new URLSearchParams(window.location.search);
+const pkgId   = params.get("id")    || "";
+const pkgName = params.get("name")  || "Trip Package";
+const price   = parseInt(params.get("price") || "0");
+
+document.getElementById("payEmoji").textContent     = PKG_EMOJIS[pkgId] || "🌍";
+document.getElementById("payName").textContent      = pkgName;
+document.getElementById("payAmt").textContent       = "₹" + price.toLocaleString("en-IN");
+document.getElementById("payMeta").textContent      = "Complete your booking for " + pkgName;
+document.getElementById("payBtn").innerHTML         = "Pay ₹" + price.toLocaleString("en-IN") + " →";
+
+window.onload = function() {
+  if (!localStorage.getItem("token")) {
+    window.location.href = "login.html"; return;
+  }
+};
+
+async function initiatePayment() {
+  const btn = document.getElementById("payBtn");
+  btn.disabled = true; btn.textContent = "Creating order...";
+
+  try {
+    // Try to create Razorpay order from backend
+    const r = await fetch(`${API}/api/payment/create-order`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + localStorage.getItem("token") },
+      body: JSON.stringify({ amount: price * 100 }) // Razorpay takes paise
+    });
+
+    if (r.ok) {
+      const order = await r.json();
+      openRazorpay(order.id);
+    } else {
+      // If backend not available, show mock payment
+      simulatePayment();
+    }
+  } catch {
+    simulatePayment();
+  }
+}
+
+function openRazorpay(orderId) {
+  const options = {
+    key: RAZORPAY_KEY,
+    amount: price * 100,
+    currency: "INR",
+    name: "TripZen",
+    description: pkgName,
+    order_id: orderId,
+    handler: async function(response) {
+      // Verify payment on backend
+      try {
+        await fetch(`${API}/api/payment/verify`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": "Bearer " + localStorage.getItem("token") },
+          body: JSON.stringify({ razorpay_order_id: response.razorpay_order_id, razorpay_payment_id: response.razorpay_payment_id, razorpay_signature: response.razorpay_signature })
+        });
+      } catch {}
+      showSuccess(response.razorpay_payment_id);
+    },
+    prefill: {
+      name: localStorage.getItem("userName") || "",
+      contact: localStorage.getItem("userPhone") || "",
+    },
+    theme: { color: "#ffb703" },
+    modal: { ondismiss: function() {
+      const btn = document.getElementById("payBtn");
+      btn.disabled = false; btn.innerHTML = "Pay ₹" + price.toLocaleString("en-IN") + " →";
+    }}
+  };
+  new Razorpay(options).open();
+}
+
+function simulatePayment() {
+  // Demo mode: simulate payment success after 1.5s
+  const btn = document.getElementById("payBtn");
+  btn.textContent = "Processing payment...";
+  setTimeout(() => {
+    // Save to localStorage as fallback
+    const bookings = JSON.parse(localStorage.getItem("bookings") || "[]");
+    bookings.unshift({ packageId: pkgId, packageName: pkgName, price, status: "Confirmed", createdAt: new Date().toISOString(), _id: "TZ-" + Date.now() });
+    localStorage.setItem("bookings", JSON.stringify(bookings));
+    showSuccess("demo_" + Date.now());
+  }, 1500);
+}
+
+function showSuccess(payId) {
+  document.getElementById("payCard").style.display = "none";
+  document.getElementById("successCard").style.display = "block";
+  document.getElementById("refPill").textContent = "REF: TZ-" + (payId ? payId.toString().slice(-6) : Date.now().toString().slice(-6));
+}
+</script>
+</body>
+</html>

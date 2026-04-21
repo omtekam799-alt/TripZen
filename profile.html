@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Dashboard — TripZen</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#ffb703;--gold-dark:#e09800;--bg:#080c14;--bg2:#0d1422;--bg3:#111927;--surface:rgba(255,255,255,0.04);--border:rgba(255,255,255,0.07);--text:#f0ede8;--muted:#7a8499;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:0.6;}
+.navbar{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:72px;background:rgba(8,12,20,0.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
+.logo-text{font-family:'Playfair Display',serif;font-size:22px;color:var(--text);text-decoration:none;}
+.logo-text span{color:var(--gold);}
+nav{display:flex;gap:36px;align-items:center;}
+nav a{color:var(--muted);text-decoration:none;font-size:14px;transition:color 0.2s;}
+nav a:hover,nav a.active{color:var(--text);}
+nav a.cta{color:#080c14;background:var(--gold);padding:8px 20px;border-radius:100px;font-weight:500;}
+.page-wrap{max-width:1100px;margin:0 auto;padding:100px 48px 80px;position:relative;z-index:1;}
+.dashboard-grid{display:grid;grid-template-columns:300px 1fr;gap:28px;align-items:start;}
+
+/* PROFILE CARD */
+.profile-card{background:var(--bg2);border:1px solid var(--border);border-radius:24px;padding:28px;position:sticky;top:92px;}
+.profile-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#ffb703,#fb8500);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:#080c14;margin:0 auto 16px;font-family:'Playfair Display',serif;}
+.profile-name{font-size:20px;font-weight:500;text-align:center;margin-bottom:4px;}
+.profile-phone{font-size:13px;color:var(--muted);text-align:center;margin-bottom:20px;}
+.profile-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.stat-box{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;}
+.stat-num{font-size:22px;font-weight:500;color:var(--gold);}
+.stat-lbl{font-size:11px;color:var(--muted);margin-top:2px;}
+.profile-links{display:flex;flex-direction:column;gap:8px;}
+.profile-link{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;font-size:14px;color:var(--muted);cursor:pointer;transition:all 0.2s;border:none;background:transparent;width:100%;text-align:left;font-family:'DM Sans',sans-serif;}
+.profile-link:hover{background:var(--bg3);color:var(--text);}
+.profile-link.active{background:rgba(255,183,3,0.08);color:var(--gold);}
+.profile-link.danger:hover{background:rgba(248,113,113,0.08);color:#f87171;}
+.profile-link span:first-child{font-size:16px;width:20px;text-align:center;}
+
+/* MAIN CONTENT */
+.main-section{background:var(--bg2);border:1px solid var(--border);border-radius:24px;padding:28px;}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+.section-title{font-family:'Playfair Display',serif;font-size:24px;}
+.section-sub{font-size:13px;color:var(--muted);margin-top:2px;}
+.tabs{display:flex;gap:4px;background:var(--bg3);border-radius:10px;padding:4px;}
+.tab{padding:7px 16px;border-radius:7px;font-size:13px;color:var(--muted);cursor:pointer;border:none;background:transparent;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.tab.active{background:var(--bg2);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,0.3);}
+
+/* BOOKING CARDS */
+.booking-list{display:flex;flex-direction:column;gap:14px;}
+.booking-card{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:20px;display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;transition:border-color 0.2s;}
+.booking-card:hover{border-color:rgba(255,183,3,0.12);}
+.booking-emoji{font-size:36px;width:60px;height:60px;background:var(--surface);border:1px solid var(--border);border-radius:14px;display:flex;align-items:center;justify-content:center;}
+.booking-name{font-size:16px;font-weight:500;margin-bottom:4px;}
+.booking-meta{font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:12px;margin-top:6px;}
+.booking-meta span{display:flex;align-items:center;gap:4px;}
+.booking-price{font-size:18px;font-weight:500;color:var(--gold);text-align:right;}
+.booking-date{font-size:11px;color:var(--muted);text-align:right;margin-top:4px;}
+.status-badge{display:inline-block;font-size:10px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;padding:3px 10px;border-radius:100px;margin-top:6px;}
+.status-confirmed{background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.2);color:#4ade80;}
+.status-pending{background:rgba(255,183,3,0.1);border:1px solid rgba(255,183,3,0.2);color:var(--gold);}
+.status-cancelled{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.2);color:#f87171;}
+.cancel-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:8px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;margin-top:8px;}
+.cancel-btn:hover{border-color:rgba(248,113,113,0.3);color:#f87171;}
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted);}
+.empty-state .emoji{font-size:48px;margin-bottom:16px;}
+.empty-state p{margin-bottom:20px;}
+.btn-gold{background:var(--gold);color:#080c14;border:none;padding:12px 24px;border-radius:100px;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.btn-gold:hover{background:var(--gold-dark);}
+@media(max-width:900px){.navbar{padding:0 20px;}nav a:not(.cta){display:none;}.page-wrap{padding:90px 16px 60px;}.dashboard-grid{grid-template-columns:1fr;}.profile-card{position:static;}.booking-card{grid-template-columns:auto 1fr;}.booking-price,.booking-date{grid-column:2;text-align:left;}}
+</style>
+</head>
+<body>
+<header class="navbar">
+  <a href="index.html" class="logo-text">Trip<span>Zen</span></a>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="packages.html">Packages</a>
+    <a href="ai-planner.html">Zeno AI</a>
+    <a href="contact.html">Contact</a>
+    <a href="profile.html" class="active cta" id="navProfileBtn">Profile</a>
+  </nav>
+</header>
+
+<div class="page-wrap">
+  <div class="dashboard-grid">
+    <!-- LEFT: PROFILE -->
+    <div class="profile-card">
+      <div class="profile-avatar" id="avatarInitials">?</div>
+      <div class="profile-name" id="profileName">Loading...</div>
+      <div class="profile-phone" id="profilePhone">—</div>
+      <div class="profile-stats">
+        <div class="stat-box"><div class="stat-num" id="statTotal">0</div><div class="stat-lbl">Trips Booked</div></div>
+        <div class="stat-box"><div class="stat-num" id="statSpent">₹0</div><div class="stat-lbl">Total Spent</div></div>
+      </div>
+      <div class="profile-links">
+        <button class="profile-link active" onclick="showTab('bookings')"><span>📋</span> My Bookings</button>
+        <button class="profile-link" onclick="window.location.href='packages.html'"><span>🌍</span> Explore Packages</button>
+        <button class="profile-link" onclick="window.location.href='ai-planner.html'"><span>🤖</span> Zeno AI Planner</button>
+        <button class="profile-link danger" onclick="logout()"><span>🚪</span> Logout</button>
+      </div>
+    </div>
+
+    <!-- RIGHT: BOOKINGS -->
+    <div class="main-section">
+      <div class="section-header">
+        <div>
+          <div class="section-title">My Bookings</div>
+          <div class="section-sub" id="bookingSubtitle">Loading your trips...</div>
+        </div>
+        <div class="tabs">
+          <button class="tab active" onclick="filterBookings('all',this)">All</button>
+          <button class="tab" onclick="filterBookings('Confirmed',this)">Confirmed</button>
+          <button class="tab" onclick="filterBookings('Pending',this)">Pending</button>
+        </div>
+      </div>
+      <div class="booking-list" id="bookingList">
+        <div class="empty-state"><div class="emoji">⏳</div><p>Loading your bookings...</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = "http://localhost:5000";
+let allBookings = [];
+
+window.onload = async function() {
+  if (!localStorage.getItem("token")) {
+    window.location.href = "login.html"; return;
+  }
+  loadProfile();
+  await loadBookings();
+};
+
+function loadProfile() {
+  const name = localStorage.getItem("userName") || "Traveller";
+  const phone = localStorage.getItem("userPhone") || "—";
+  document.getElementById("profileName").textContent = name;
+  document.getElementById("profilePhone").textContent = phone ? "📱 " + phone : "—";
+  document.getElementById("avatarInitials").textContent = name.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
+}
+
+async function loadBookings() {
+  try {
+    const r = await fetch(`${API}/api/bookings/my`, {
+      headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
+    });
+    if (r.ok) { allBookings = await r.json(); }
+    else { allBookings = getLocalBookings(); }
+  } catch { allBookings = getLocalBookings(); }
+  renderBookings(allBookings);
+  updateStats();
+}
+
+function getLocalBookings() {
+  return JSON.parse(localStorage.getItem("bookings") || "[]");
+}
+
+function updateStats() {
+  document.getElementById("statTotal").textContent = allBookings.length;
+  const spent = allBookings.reduce((s,b) => s + (parseInt(b.price)||0), 0);
+  document.getElementById("statSpent").textContent = spent > 0 ? "₹" + Math.round(spent/1000) + "K" : "₹0";
+}
+
+function filterBookings(status, btn) {
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  btn.classList.add("active");
+  const filtered = status === "all" ? allBookings : allBookings.filter(b => (b.status||"Confirmed") === status);
+  renderBookings(filtered);
+}
+
+const PKG_EMOJIS = {goa:"🌴",manali:"🏔",bali:"🏝",dubai:"🏙",kerala:"🌿",shimla:"⛄",thailand:"🐘",rajasthan:"🏰"};
+
+function renderBookings(bookings) {
+  const list = document.getElementById("bookingList");
+  document.getElementById("bookingSubtitle").textContent = bookings.length + " trip" + (bookings.length!==1?"s":"") + " found";
+
+  if (!bookings.length) {
+    list.innerHTML = `<div class="empty-state">
+      <div class="emoji">✈️</div>
+      <p>No bookings yet. Start your adventure!</p>
+      <button class="btn-gold" onclick="window.location.href='packages.html'">Explore Packages</button>
+    </div>`; return;
+  }
+
+  list.innerHTML = bookings.map((b,i) => {
+    const emoji = PKG_EMOJIS[b.packageId] || "🌍";
+    const status = b.status || "Confirmed";
+    const statusClass = status==="Confirmed"?"status-confirmed":status==="Pending"?"status-pending":"status-cancelled";
+    const date = b.createdAt ? new Date(b.createdAt).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"}) : "—";
+    const price = b.price ? "₹" + Number(b.price).toLocaleString("en-IN") : "₹—";
+    return `
+    <div class="booking-card">
+      <div class="booking-emoji">${emoji}</div>
+      <div>
+        <div class="booking-name">${b.packageName || b.package || "Trip Package"}</div>
+        <div class="booking-meta">
+          ${b.travelDate ? `<span>📅 ${b.travelDate}</span>` : ""}
+          ${b.travellers ? `<span>👥 ${b.travellers.adults||1} Adults${b.travellers.children?', '+b.travellers.children+' Child':''}</span>` : ""}
+          ${b.name ? `<span>👤 ${b.name}</span>` : ""}
+        </div>
+        <span class="status-badge ${statusClass}">${status}</span>
+        ${status==="Confirmed" ? `<button class="cancel-btn" onclick="cancelBooking(${i})">Cancel</button>` : ""}
+      </div>
+      <div>
+        <div class="booking-price">${price}</div>
+        <div class="booking-date">Booked: ${date}</div>
+      </div>
+    </div>`}).join('');
+}
+
+function cancelBooking(idx) {
+  if (!confirm("Are you sure you want to cancel this booking?")) return;
+  allBookings[idx].status = "Cancelled";
+  const local = getLocalBookings();
+  if (local[idx]) { local[idx].status = "Cancelled"; localStorage.setItem("bookings", JSON.stringify(local)); }
+  renderBookings(allBookings);
+  updateStats();
+}
+
+function showTab(tab) {
+  document.querySelectorAll(".profile-link").forEach(l => l.classList.remove("active"));
+  event.target.closest(".profile-link").classList.add("active");
+}
+
+function logout() {
+  if (!confirm("Logout karna chahte ho?")) return;
+  localStorage.removeItem("token");
+  localStorage.removeItem("userName");
+  localStorage.removeItem("userPhone");
+  window.location.href = "login.html";
+}
+</script>
+</body>
+</html>

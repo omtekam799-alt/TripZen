@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel — TripZen</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#ffb703;--gold-dark:#e09800;--bg:#080c14;--bg2:#0d1422;--bg3:#111927;--surface:rgba(255,255,255,0.04);--border:rgba(255,255,255,0.07);--text:#f0ede8;--muted:#7a8499;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;}
+.sidebar{width:240px;background:var(--bg2);border-right:1px solid var(--border);min-height:100vh;padding:24px 16px;flex-shrink:0;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50;}
+.sidebar-logo{font-family:'Playfair Display',serif;font-size:20px;color:var(--text);text-decoration:none;padding:0 8px;margin-bottom:8px;display:block;}
+.sidebar-logo span{color:var(--gold);}
+.sidebar-badge{font-size:10px;background:rgba(255,183,3,0.15);border:1px solid rgba(255,183,3,0.2);color:var(--gold);padding:2px 8px;border-radius:100px;margin-left:4px;}
+.sidebar-divider{border:none;border-top:1px solid var(--border);margin:16px 0;}
+.sidebar-label{font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);padding:0 8px;margin-bottom:8px;margin-top:4px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;font-size:14px;color:var(--muted);cursor:pointer;transition:all 0.2s;border:none;background:transparent;width:100%;text-align:left;font-family:'DM Sans',sans-serif;}
+.nav-item:hover{background:var(--bg3);color:var(--text);}
+.nav-item.active{background:rgba(255,183,3,0.08);color:var(--gold);}
+.nav-item span:first-child{font-size:16px;width:20px;text-align:center;}
+.sidebar-footer{margin-top:auto;}
+.main{margin-left:240px;flex:1;padding:32px;min-height:100vh;}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;}
+.page-title{font-family:'Playfair Display',serif;font-size:28px;}
+.page-sub{font-size:13px;color:var(--muted);margin-top:2px;}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:20px;}
+.stat-card-label{font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:500;letter-spacing:0.04em;}
+.stat-card-num{font-size:28px;font-weight:500;color:var(--text);}
+.stat-card-num.gold{color:var(--gold);}
+.stat-card-num.green{color:#4ade80;}
+.stat-card-trend{font-size:11px;color:var(--muted);margin-top:4px;}
+.section-card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:24px;margin-bottom:24px;}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.section-title{font-size:16px;font-weight:500;}
+.section-actions{display:flex;gap:8px;}
+.btn-sm{padding:8px 16px;border-radius:8px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all 0.2s;}
+.btn-sm:hover{border-color:var(--gold);color:var(--gold);}
+.btn-sm.primary{background:var(--gold);color:#080c14;border-color:var(--gold);}
+.btn-sm.primary:hover{background:var(--gold-dark);}
+.btn-sm.danger:hover{border-color:rgba(248,113,113,0.3);color:#f87171;}
+table{width:100%;border-collapse:collapse;}
+th{font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);text-align:left;padding:0 12px 12px;}
+td{font-size:13px;padding:12px;border-top:1px solid var(--border);vertical-align:middle;}
+tr:hover td{background:rgba(255,255,255,0.015);}
+.badge{display:inline-block;font-size:10px;font-weight:500;padding:3px 10px;border-radius:100px;letter-spacing:0.04em;}
+.badge-confirmed{background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.2);color:#4ade80;}
+.badge-pending{background:rgba(255,183,3,0.1);border:1px solid rgba(255,183,3,0.2);color:var(--gold);}
+.badge-cancelled{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.2);color:#f87171;}
+.badge-domestic{background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);color:#60a5fa;}
+.badge-intl{background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.2);color:#c084fc;}
+.pkg-emoji{font-size:20px;margin-right:8px;}
+.action-btns{display:flex;gap:6px;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;align-items:center;justify-content:center;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:28px;width:100%;max-width:480px;}
+.modal-title{font-size:18px;font-weight:500;margin-bottom:20px;}
+.form-group{margin-bottom:16px;}
+.form-label{font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:block;}
+.form-input,.form-select{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color 0.2s;}
+.form-input:focus,.form-select:focus{border-color:var(--gold);}
+.form-input::placeholder{color:var(--muted);}
+.modal-footer{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;}
+.panel{display:none;}
+.panel.active{display:block;}
+@media(max-width:900px){.sidebar{display:none;}.main{margin-left:0;padding:20px;}.stats-row{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <a href="index.html" class="sidebar-logo">Trip<span>Zen</span><span class="sidebar-badge">Admin</span></a>
+  <p style="font-size:12px;color:var(--muted);padding:0 8px;margin-bottom:16px;" id="adminGreet">Welcome back!</p>
+  <hr class="sidebar-divider">
+  <div class="sidebar-label">Main</div>
+  <button class="nav-item active" onclick="showPanel('dashboard',this)"><span>📊</span> Dashboard</button>
+  <button class="nav-item" onclick="showPanel('bookings',this)"><span>📋</span> Bookings</button>
+  <button class="nav-item" onclick="showPanel('packages',this)"><span>🌍</span> Packages</button>
+  <button class="nav-item" onclick="showPanel('contacts',this)"><span>📩</span> Messages</button>
+  <hr class="sidebar-divider">
+  <div class="sidebar-label">Account</div>
+  <button class="nav-item" onclick="window.location.href='index.html'"><span>🏠</span> View Site</button>
+  <div class="sidebar-footer">
+    <button class="nav-item" onclick="adminLogout()" style="color:#f87171;"><span>🚪</span> Logout</button>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+
+  <!-- DASHBOARD PANEL -->
+  <div class="panel active" id="panel-dashboard">
+    <div class="top-bar">
+      <div><div class="page-title">Dashboard</div><div class="page-sub">TripZen overview</div></div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-card-label">Total Bookings</div><div class="stat-card-num gold" id="totalBookings">—</div><div class="stat-card-trend">All time</div></div>
+      <div class="stat-card"><div class="stat-card-label">Revenue</div><div class="stat-card-num green" id="totalRevenue">₹—</div><div class="stat-card-trend">Confirmed bookings</div></div>
+      <div class="stat-card"><div class="stat-card-label">Packages</div><div class="stat-card-num" id="totalPackages">8</div><div class="stat-card-trend">Active tours</div></div>
+      <div class="stat-card"><div class="stat-card-label">Messages</div><div class="stat-card-num" id="totalMessages">—</div><div class="stat-card-trend">Contact requests</div></div>
+    </div>
+    <div class="section-card">
+      <div class="section-header"><div class="section-title">Recent Bookings</div><button class="btn-sm" onclick="showPanel('bookings', document.querySelectorAll('.nav-item')[1])">View all</button></div>
+      <table><thead><tr><th>Package</th><th>Traveller</th><th>Date</th><th>Amount</th><th>Status</th></tr></thead>
+      <tbody id="recentBookings"><tr><td colspan="5" style="text-align:center;color:var(--muted);padding:28px;">Loading...</td></tr></tbody></table>
+    </div>
+  </div>
+
+  <!-- BOOKINGS PANEL -->
+  <div class="panel" id="panel-bookings">
+    <div class="top-bar">
+      <div><div class="page-title">All Bookings</div><div class="page-sub" id="bookingsCount">—</div></div>
+      <div class="section-actions">
+        <select class="btn-sm" onchange="filterStatus(this.value)" style="cursor:pointer;">
+          <option value="all">All Status</option>
+          <option value="Confirmed">Confirmed</option>
+          <option value="Pending">Pending</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
+      </div>
+    </div>
+    <div class="section-card">
+      <table><thead><tr><th>Booking ID</th><th>Package</th><th>Traveller</th><th>Travel Date</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody id="allBookingsTable"><tr><td colspan="7" style="text-align:center;color:var(--muted);padding:28px;">Loading...</td></tr></tbody></table>
+    </div>
+  </div>
+
+  <!-- PACKAGES PANEL -->
+  <div class="panel" id="panel-packages">
+    <div class="top-bar">
+      <div><div class="page-title">Packages</div><div class="page-sub">Manage tour offerings</div></div>
+      <button class="btn-sm primary" onclick="openAddPkg()">+ Add Package</button>
+    </div>
+    <div class="section-card">
+      <table><thead><tr><th>Package</th><th>Type</th><th>Duration</th><th>Price</th><th>Rating</th><th>Actions</th></tr></thead>
+      <tbody id="packagesTable"></tbody></table>
+    </div>
+  </div>
+
+  <!-- CONTACTS PANEL -->
+  <div class="panel" id="panel-contacts">
+    <div class="top-bar"><div><div class="page-title">Messages</div><div class="page-sub">Contact form submissions</div></div></div>
+    <div class="section-card">
+      <table><thead><tr><th>Name</th><th>Email/Phone</th><th>Message</th><th>Date</th></tr></thead>
+      <tbody id="contactsTable"><tr><td colspan="4" style="text-align:center;color:var(--muted);padding:28px;">No messages yet</td></tr></tbody></table>
+    </div>
+  </div>
+
+</div>
+
+<!-- ADD PACKAGE MODAL -->
+<div class="modal-overlay" id="pkgModal">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">Add New Package</div>
+    <div class="form-group"><label class="form-label">Package Name</label><input type="text" class="form-input" id="pkgName" placeholder="e.g. Goa Beach Trip"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+      <div class="form-group"><label class="form-label">Duration</label><input type="text" class="form-input" id="pkgDuration" placeholder="e.g. 3 Days / 2 Nights"></div>
+      <div class="form-group"><label class="form-label">Price (₹)</label><input type="number" class="form-input" id="pkgPrice" placeholder="e.g. 12999"></div>
+      <div class="form-group"><label class="form-label">Type</label>
+        <select class="form-select" id="pkgType"><option>Domestic</option><option>International</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Category</label>
+        <select class="form-select" id="pkgCat"><option>Beach</option><option>Mountains</option><option>Heritage</option><option>Honeymoon</option><option>Adventure</option></select>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">Includes (comma separated)</label><input type="text" class="form-input" id="pkgIncludes" placeholder="Hotels, Transfers, Meals"></div>
+    <div class="modal-footer">
+      <button class="btn-sm" onclick="closeModal()">Cancel</button>
+      <button class="btn-sm primary" onclick="savePkg()">Save Package</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = "http://localhost:5000";
+
+const PKGS = [
+  {_id:"goa",name:"Goa Tour",duration:"3 Days / 2 Nights",price:7999,type:"Domestic",cat:"Beach",emoji:"🌴",rating:"4.8",reviews:238},
+  {_id:"manali",name:"Manali Trip",duration:"5 Days / 4 Nights",price:12999,type:"Domestic",cat:"Mountains",emoji:"🏔",rating:"4.9",reviews:312},
+  {_id:"bali",name:"Bali Escape",duration:"6 Days / 5 Nights",price:49999,type:"International",cat:"Beach",emoji:"🏝",rating:"4.9",reviews:187},
+  {_id:"dubai",name:"Dubai Tour",duration:"5 Days / 4 Nights",price:39999,type:"International",cat:"City",emoji:"🏙",rating:"4.7",reviews:143},
+  {_id:"kerala",name:"Kerala Backwaters",duration:"4 Days / 3 Nights",price:14999,type:"Domestic",cat:"Honeymoon",emoji:"🌿",rating:"4.8",reviews:201},
+  {_id:"shimla",name:"Shimla-Manali",duration:"7 Days / 6 Nights",price:18999,type:"Domestic",cat:"Mountains",emoji:"⛄",rating:"4.6",reviews:156},
+  {_id:"thailand",name:"Thailand Adventure",duration:"7 Days / 6 Nights",price:54999,type:"International",cat:"Beach",emoji:"🐘",rating:"4.8",reviews:98},
+  {_id:"rajasthan",name:"Royal Rajasthan",duration:"6 Days / 5 Nights",price:22999,type:"Domestic",cat:"Heritage",emoji:"🏰",rating:"4.7",reviews:175},
+];
+
+let allBookings = [];
+
+window.onload = async function() {
+  const name = localStorage.getItem("userName");
+  if (!localStorage.getItem("token")) { window.location.href = "login.html"; return; }
+  document.getElementById("adminGreet").textContent = "Welcome, " + (name || "Admin") + " 👋";
+  renderPackages();
+  await loadBookings();
+};
+
+async function loadBookings() {
+  try {
+    const r = await fetch(`${API}/api/bookings`, { headers: { "Authorization": "Bearer " + localStorage.getItem("token") } });
+    if (r.ok) allBookings = await r.json();
+    else allBookings = JSON.parse(localStorage.getItem("bookings") || "[]");
+  } catch { allBookings = JSON.parse(localStorage.getItem("bookings") || "[]"); }
+  updateStats();
+  renderRecentBookings();
+  renderAllBookings(allBookings);
+}
+
+function updateStats() {
+  document.getElementById("totalBookings").textContent = allBookings.length;
+  const rev = allBookings.filter(b => b.status !== "Cancelled").reduce((s,b) => s + (parseInt(b.price)||0), 0);
+  document.getElementById("totalRevenue").textContent = "₹" + (rev/1000).toFixed(0) + "K";
+  document.getElementById("totalMessages").textContent = "0";
+}
+
+function renderRecentBookings() {
+  const recent = allBookings.slice(0, 5);
+  document.getElementById("recentBookings").innerHTML = recent.length ? recent.map(b => `
+    <tr>
+      <td>${b.packageName || b.package || "Trip"}</td>
+      <td>${b.name || "—"}</td>
+      <td>${b.travelDate || b.date || "—"}</td>
+      <td style="color:var(--gold)">₹${(b.price||0).toLocaleString("en-IN")}</td>
+      <td><span class="badge badge-${(b.status||"Confirmed").toLowerCase()}">${b.status||"Confirmed"}</span></td>
+    </tr>`).join('') : `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:28px;">No bookings yet</td></tr>`;
+}
+
+function renderAllBookings(bkgs) {
+  document.getElementById("bookingsCount").textContent = bkgs.length + " total bookings";
+  document.getElementById("allBookingsTable").innerHTML = bkgs.length ? bkgs.map((b,i) => `
+    <tr>
+      <td style="font-size:11px;color:var(--muted)">TZ-${(b._id||i).toString().slice(-6)}</td>
+      <td>${b.packageName || b.package || "Trip"}</td>
+      <td>${b.name || localStorage.getItem("userName") || "—"}</td>
+      <td>${b.travelDate || b.date || "—"}</td>
+      <td style="color:var(--gold)">₹${(b.price||0).toLocaleString("en-IN")}</td>
+      <td><span class="badge badge-${(b.status||"Confirmed").toLowerCase()}">${b.status||"Confirmed"}</span></td>
+      <td><div class="action-btns">
+        <button class="btn-sm" onclick="changeStatus(${i},'Confirmed')">✓</button>
+        <button class="btn-sm danger" onclick="changeStatus(${i},'Cancelled')">✕</button>
+      </div></td>
+    </tr>`).join('') : `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:28px;">No bookings found</td></tr>`;
+}
+
+function filterStatus(status) {
+  const filtered = status === "all" ? allBookings : allBookings.filter(b => (b.status||"Confirmed") === status);
+  renderAllBookings(filtered);
+}
+
+function changeStatus(idx, status) {
+  allBookings[idx].status = status;
+  const local = JSON.parse(localStorage.getItem("bookings")||"[]");
+  if (local[idx]) { local[idx].status = status; localStorage.setItem("bookings", JSON.stringify(local)); }
+  renderAllBookings(allBookings);
+  updateStats();
+}
+
+function renderPackages() {
+  document.getElementById("totalPackages").textContent = PKGS.length;
+  document.getElementById("packagesTable").innerHTML = PKGS.map(p => `
+    <tr>
+      <td><span class="pkg-emoji">${p.emoji}</span>${p.name}</td>
+      <td><span class="badge ${p.type==='Domestic'?'badge-domestic':'badge-intl'}">${p.type}</span></td>
+      <td>${p.duration}</td>
+      <td style="color:var(--gold)">₹${p.price.toLocaleString("en-IN")}</td>
+      <td>⭐ ${p.rating} (${p.reviews})</td>
+      <td><div class="action-btns"><button class="btn-sm">Edit</button><button class="btn-sm danger">Delete</button></div></td>
+    </tr>`).join('');
+}
+
+function showPanel(name, btn) {
+  document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+  document.getElementById("panel-" + name).classList.add("active");
+  if (btn) btn.classList.add("active");
+}
+
+function openAddPkg() { document.getElementById("pkgModal").classList.add("show"); }
+function closeModal() { document.getElementById("pkgModal").classList.remove("show"); }
+function savePkg() {
+  alert("Package saved! (Connect to backend API to persist)");
+  closeModal();
+}
+function adminLogout() {
+  localStorage.removeItem("token"); localStorage.removeItem("userName");
+  window.location.href = "login.html";
+}
+</script>
+</body>
+</html>

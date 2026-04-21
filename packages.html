@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Packages — TripZen</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #ffb703; --gold-dark: #e09800;
+  --bg: #080c14; --bg2: #0d1422; --bg3: #111927;
+  --surface: rgba(255,255,255,0.04); --border: rgba(255,255,255,0.07);
+  --text: #f0ede8; --muted: #7a8499;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); overflow-x:hidden; }
+body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events:none; z-index:0; opacity:0.6; }
+.navbar { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:0 48px; height:72px; background:rgba(8,12,20,0.85); backdrop-filter:blur(16px); border-bottom:1px solid var(--border); }
+.logo-text { font-family:'Playfair Display',serif; font-size:22px; color:var(--text); letter-spacing:0.02em; text-decoration:none; }
+.logo-text span { color:var(--gold); }
+nav { display:flex; gap:36px; align-items:center; }
+nav a { color:var(--muted); text-decoration:none; font-size:14px; font-weight:400; letter-spacing:0.03em; transition:color 0.2s; }
+nav a:hover, nav a.active { color:var(--text); }
+nav a.cta { color:#080c14; background:var(--gold); padding:8px 20px; border-radius:100px; font-weight:500; transition:background 0.2s, transform 0.2s; }
+nav a.cta:hover { background:var(--gold-dark); transform:translateY(-1px); }
+.page-hero { position:relative; padding:140px 48px 80px; text-align:center; overflow:hidden; z-index:1; }
+.page-hero-bg { position:absolute; inset:0; background:radial-gradient(ellipse 80% 60% at 50% 100%, rgba(255,183,3,0.08) 0%, transparent 70%); z-index:-1; }
+.page-hero-label { font-size:11px; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold); margin-bottom:16px; display:block; }
+.page-hero h1 { font-family:'Playfair Display',serif; font-size:clamp(32px,5vw,60px); font-weight:700; line-height:1.1; margin-bottom:16px; }
+.page-hero h1 em { font-style:italic; color:var(--gold); }
+.page-hero p { font-size:16px; color:var(--muted); max-width:480px; margin:0 auto; line-height:1.7; }
+.filter-bar { padding:0 48px 48px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap; z-index:1; position:relative; }
+.filter-btn { padding:8px 20px; border-radius:100px; border:1px solid var(--border); background:transparent; color:var(--muted); font-size:13px; font-family:'DM Sans',sans-serif; cursor:pointer; transition:all 0.2s; }
+.filter-btn:hover, .filter-btn.active { border-color:var(--gold); color:var(--gold); background:rgba(255,183,3,0.06); }
+.packages-section { padding:0 48px 80px; position:relative; z-index:1; }
+.packages-count { font-size:13px; color:var(--muted); margin-bottom:24px; }
+.packages-count span { color:var(--gold); font-weight:500; }
+.packages-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; }
+.pkg-card { background:var(--bg3); border:1px solid var(--border); border-radius:20px; overflow:hidden; transition:transform 0.3s, box-shadow 0.3s, border-color 0.3s; animation:fadeUp 0.5s ease both; }
+.pkg-card:hover { transform:translateY(-6px); box-shadow:0 20px 50px rgba(0,0,0,0.5); border-color:rgba(255,183,3,0.15); }
+.pkg-img-wrap { position:relative; overflow:hidden; height:190px; }
+.pkg-img { width:100%; height:100%; object-fit:cover; transition:transform 0.5s; display:block; }
+.pkg-card:hover .pkg-img { transform:scale(1.07); }
+.pkg-img-placeholder { width:100%; height:190px; background:linear-gradient(135deg,#1a2540,#0d1422); display:flex; align-items:center; justify-content:center; font-size:52px; }
+.pkg-badge { position:absolute; top:12px; left:12px; background:rgba(8,12,20,0.85); backdrop-filter:blur(8px); border:1px solid rgba(255,183,3,0.2); color:var(--gold); font-size:10px; font-weight:500; letter-spacing:0.06em; text-transform:uppercase; padding:4px 10px; border-radius:100px; }
+.pkg-body { padding:20px; }
+.pkg-tag { display:inline-block; font-size:11px; font-weight:500; letter-spacing:0.06em; text-transform:uppercase; color:var(--gold); background:rgba(255,183,3,0.1); padding:3px 10px; border-radius:100px; margin-bottom:10px; }
+.pkg-name { font-family:'Playfair Display',serif; font-size:18px; margin-bottom:8px; }
+.pkg-meta { display:flex; gap:14px; margin-bottom:12px; }
+.pkg-meta-item { display:flex; align-items:center; gap:4px; font-size:12px; color:var(--muted); }
+.pkg-includes { display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap; }
+.pkg-include-tag { font-size:10px; color:var(--muted); background:var(--surface); border:1px solid var(--border); padding:2px 8px; border-radius:100px; }
+.pkg-footer { display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:1px solid var(--border); }
+.pkg-price { font-size:22px; font-weight:500; color:var(--gold); line-height:1; }
+.pkg-price span { font-size:11px; color:var(--muted); font-weight:400; display:block; margin-top:2px; }
+.pkg-btn { background:var(--gold); color:#080c14; border:none; padding:10px 20px; border-radius:100px; font-size:13px; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; transition:background 0.2s, transform 0.2s; }
+.pkg-btn:hover { background:var(--gold-dark); transform:scale(1.04); }
+.pkg-card.popular { border-color:rgba(255,183,3,0.2); }
+.why-book { margin:0 48px 80px; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:48px; display:grid; grid-template-columns:repeat(4,1fr); gap:32px; position:relative; z-index:1; }
+.why-item { text-align:center; }
+.why-icon { font-size:28px; margin-bottom:12px; }
+.why-label { font-size:14px; font-weight:500; margin-bottom:6px; }
+.why-desc { font-size:12px; color:var(--muted); line-height:1.6; }
+footer { border-top:1px solid var(--border); padding:40px 48px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; position:relative; z-index:1; }
+footer p { font-size:13px; color:var(--muted); }
+.footer-links { display:flex; gap:24px; }
+.footer-links a { font-size:13px; color:var(--muted); text-decoration:none; transition:color 0.2s; }
+.footer-links a:hover { color:var(--text); }
+.whatsapp-btn { position:fixed; bottom:28px; right:28px; background:#25D366; color:white; width:52px; height:52px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px; text-decoration:none; box-shadow:0 4px 20px rgba(37,211,102,0.4); z-index:999; transition:transform 0.3s; }
+.whatsapp-btn:hover { transform:scale(1.1); }
+.skeleton-card { background:var(--bg3); border:1px solid var(--border); border-radius:20px; height:360px; position:relative; overflow:hidden; }
+.skeleton-card::after { content:''; position:absolute; inset:0; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.03),transparent); animation:shimmer 1.5s infinite; }
+.reveal { opacity:0; transform:translateY(24px); transition:opacity 0.6s ease,transform 0.6s ease; }
+.reveal.visible { opacity:1; transform:translateY(0); }
+@keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+@keyframes shimmer { from{transform:translateX(-100%)} to{transform:translateX(100%)} }
+@media(max-width:1100px){ .packages-grid{grid-template-columns:repeat(3,1fr)} }
+@media(max-width:900px){ .navbar{padding:0 20px} nav a:not(.cta){display:none} .packages-grid{grid-template-columns:repeat(2,1fr)} .packages-section,.filter-bar{padding-left:20px;padding-right:20px} .page-hero{padding:120px 20px 48px} .why-book{grid-template-columns:repeat(2,1fr);margin:0 20px 60px;padding:32px 24px} footer{padding:32px 20px} }
+@media(max-width:600px){ .packages-grid{grid-template-columns:1fr} .why-book{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+
+<header class="navbar">
+  <a href="index.html" class="logo-text">Trip<span>Zen</span></a>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="packages.html" class="active">Packages</a>
+    <a href="ai-planner.html">Zeno AI</a>
+    <a href="contact.html">Contact</a>
+    <a href="login.html" class="cta" id="navLoginBtn">Login</a>
+  </nav>
+</header>
+
+<section class="page-hero">
+  <div class="page-hero-bg"></div>
+  <span class="page-hero-label">✈ Best Deals</span>
+  <h1>Curated Tour<br><em>Packages</em></h1>
+  <p>Domestic to international — the perfect trip for every budget. Zero hidden charges, 100% satisfaction.</p>
+</section>
+
+<div class="filter-bar">
+  <button class="filter-btn active" onclick="filterPkgs('all',this)">All Packages</button>
+  <button class="filter-btn" onclick="filterPkgs('Domestic',this)">🇮🇳 Domestic</button>
+  <button class="filter-btn" onclick="filterPkgs('International',this)">🌍 International</button>
+  <button class="filter-btn" onclick="filterPkgs('Beach',this)">🏖 Beach</button>
+  <button class="filter-btn" onclick="filterPkgs('Mountains',this)">🏔 Mountains</button>
+  <button class="filter-btn" onclick="filterPkgs('Honeymoon',this)">💑 Honeymoon</button>
+</div>
+
+<section class="packages-section">
+  <div class="packages-count" id="pkgCount">Showing <span>8</span> packages</div>
+  <div class="packages-grid" id="packageGrid">
+    <div class="skeleton-card"></div>
+    <div class="skeleton-card"></div>
+    <div class="skeleton-card"></div>
+    <div class="skeleton-card"></div>
+  </div>
+</section>
+
+<div class="why-book reveal">
+  <div class="why-item"><div class="why-icon">🔒</div><div class="why-label">Secure Booking</div><div class="why-desc">100% secure payments with instant confirmation.</div></div>
+  <div class="why-item"><div class="why-icon">💰</div><div class="why-label">Best Price Guarantee</div><div class="why-desc">Found it cheaper? We'll refund the difference.</div></div>
+  <div class="why-item"><div class="why-icon">🤖</div><div class="why-label">AI Personalization</div><div class="why-desc">Zeno builds a custom itinerary just for you.</div></div>
+  <div class="why-item"><div class="why-icon">📞</div><div class="why-label">24/7 Support</div><div class="why-desc">Any issue — we're always here to help.</div></div>
+</div>
+
+<footer>
+  <div>
+    <a href="index.html" class="logo-text" style="font-size:18px;margin-bottom:4px;display:block">Trip<span>Zen</span></a>
+    <p>© 2026 TripZen. Plan Smart. Travel Easy.</p>
+  </div>
+  <div class="footer-links">
+    <a href="packages.html">Packages</a>
+    <a href="ai-planner.html">Zeno AI</a>
+    <a href="contact.html">Contact</a>
+    <a href="login.html">Login</a>
+  </div>
+</footer>
+
+<a href="https://wa.me/917821881456" class="whatsapp-btn" target="_blank">💬</a>
+
+<script>
+const ALL_PACKAGES = [
+  { _id:"goa",       name:"Goa Tour",           duration:"3 Days / 2 Nights", price:7999,  tag:"Domestic",      cat:["Domestic","Beach"],                    emoji:"🌴", img:"images/goa.jpg",    popular:true,  includes:["Hotels","Transfers","Sightseeing"], rating:"4.8", reviews:238 },
+  { _id:"manali",    name:"Manali Trip",         duration:"5 Days / 4 Nights", price:12999, tag:"Domestic",      cat:["Domestic","Mountains"],                emoji:"🏔", img:"images/manali.jpg", popular:true,  includes:["Hotels","Meals","Transfers"],       rating:"4.9", reviews:312 },
+  { _id:"bali",      name:"Bali Escape",         duration:"6 Days / 5 Nights", price:49999, tag:"International", cat:["International","Beach","Honeymoon"],   emoji:"🏝", img:"",                  popular:true,  includes:["Flights","Hotels","Transfers"],     rating:"4.9", reviews:187 },
+  { _id:"dubai",     name:"Dubai Tour",          duration:"5 Days / 4 Nights", price:39999, tag:"International", cat:["International"],                       emoji:"🏙", img:"",                  popular:false, includes:["Flights","Hotels","City Tour"],     rating:"4.7", reviews:143 },
+  { _id:"kerala",    name:"Kerala Backwaters",   duration:"4 Days / 3 Nights", price:14999, tag:"Domestic",      cat:["Domestic","Honeymoon"],                emoji:"🌿", img:"",                  popular:false, includes:["Houseboat","Meals","Transfers"],    rating:"4.8", reviews:201 },
+  { _id:"shimla",    name:"Shimla-Manali",       duration:"7 Days / 6 Nights", price:18999, tag:"Domestic",      cat:["Domestic","Mountains"],                emoji:"⛄", img:"",                  popular:false, includes:["Hotels","Transfers","Sightseeing"], rating:"4.6", reviews:156 },
+  { _id:"thailand",  name:"Thailand Adventure",  duration:"7 Days / 6 Nights", price:54999, tag:"International", cat:["International","Beach"],               emoji:"🐘", img:"",                  popular:false, includes:["Flights","Hotels","Tours"],         rating:"4.8", reviews:98  },
+  { _id:"rajasthan", name:"Royal Rajasthan",     duration:"6 Days / 5 Nights", price:22999, tag:"Domestic",      cat:["Domestic"],                            emoji:"🏰", img:"",                  popular:false, includes:["Heritage Hotels","Camel Safari"],   rating:"4.7", reviews:175 },
+];
+
+function renderPackages(pkgs) {
+  const grid = document.getElementById("packageGrid");
+  document.getElementById("pkgCount").innerHTML = `Showing <span>${pkgs.length}</span> packages`;
+  if (!pkgs.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted)"><div style="font-size:48px;margin-bottom:16px">🔍</div><div style="font-size:16px;color:var(--text);margin-bottom:8px">No packages found</div><div>Try a different filter</div></div>`;
+    return;
+  }
+  grid.innerHTML = pkgs.map((p,i) => `
+    <div class="pkg-card ${p.popular?'popular':''}" style="animation-delay:${i*0.06}s">
+      <div class="pkg-img-wrap">
+        ${p.img ? `<img src="${p.img}" class="pkg-img" alt="${p.name}" onerror="this.parentElement.innerHTML='<div class=&quot;pkg-img-placeholder&quot;>${p.emoji}</div>'">` : `<div class="pkg-img-placeholder">${p.emoji}</div>`}
+        <div class="pkg-badge">${p.popular?'🔥 Popular':p.tag}</div>
+      </div>
+      <div class="pkg-body">
+        <div class="pkg-tag">${p.tag}</div>
+        <div class="pkg-name">${p.name}</div>
+        <div class="pkg-meta">
+          <div class="pkg-meta-item">📅 ${p.duration}</div>
+          <div class="pkg-meta-item">⭐ ${p.rating} (${p.reviews})</div>
+        </div>
+        <div class="pkg-includes">${p.includes.map(x=>`<span class="pkg-include-tag">✓ ${x}</span>`).join('')}</div>
+        <div class="pkg-footer">
+          <div class="pkg-price">₹${Number(p.price).toLocaleString('en-IN')}<span>per person</span></div>
+          <button class="pkg-btn" onclick="bookNow('${p._id}','${p.name}',${p.price})">Book Now</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function filterPkgs(f, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderPackages(f==='all' ? ALL_PACKAGES : ALL_PACKAGES.filter(p=>p.cat.includes(f)));
+}
+
+function bookNow(id, name, price) {
+  if (!localStorage.getItem("token")) { alert("Please login first!"); window.location.href="login.html"; return; }
+  window.location.href = `payment.html?id=${id}&name=${encodeURIComponent(name)}&price=${price}`;
+}
+
+function updateNavbar() {
+  const token = localStorage.getItem("token"), name = localStorage.getItem("userName");
+  const btn = document.getElementById("navLoginBtn");
+  if (btn && token) { btn.textContent = name ? name.split(" ")[0] : "Profile"; btn.href="profile.html"; }
+}
+
+const obs = new IntersectionObserver(entries => entries.forEach(e => { if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);} }), {threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+window.onload = () => { updateNavbar(); setTimeout(()=>renderPackages(ALL_PACKAGES), 400); };
+</script>
+</body>
+</html>

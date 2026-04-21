@@ -1,0 +1,259 @@
+/* RESET */
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+/* BODY */
+body{
+font-family:'Poppins',sans-serif;
+background:#0f172a;
+color:white;
+}
+
+/* NAVBAR */
+.navbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:0 40px;
+height:80px;
+position:fixed;
+top:0;
+width:100%;
+z-index:100;
+background:#0f172a;
+border-bottom:1px solid rgba(255,255,255,0.05);
+}
+
+.logo{
+height:150px;
+}
+
+nav a{
+color:white;
+margin-left:20px;
+text-decoration:none;
+}
+
+/* ================= HOME ================= */
+
+.hero{
+margin-top:80px;
+min-height:100vh;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+text-align:center;
+
+background:linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e");
+
+background-size:cover;
+background-position:center;
+}
+
+.hero h2{
+font-size:32px;
+margin-bottom:10px;
+}
+
+.hero p{
+opacity:0.8;
+}
+
+/* GRID */
+.grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:20px;
+margin-top:30px;
+width:90%;
+}
+
+/* CARD */
+.item{
+background:rgba(255,255,255,0.08);
+padding:20px;
+border-radius:16px;
+text-decoration:none;
+color:white;
+transition:0.3s;
+}
+
+.item:hover{
+transform:translateY(-8px);
+}
+
+/* FEATURES */
+.features{
+margin-top:30px;
+background:rgba(255,255,255,0.08);
+padding:20px;
+border-radius:12px;
+width:90%;
+}
+
+/* ================= AI CHAT ================= */
+
+.chat-container{
+margin-top:80px;
+height:90vh;
+display:flex;
+flex-direction:column;
+}
+
+.chat-box{
+flex:1;
+padding:20px;
+overflow-y:auto;
+}
+
+/* AI MESSAGE */
+.ai-msg{
+background:#1e293b;
+padding:12px 15px;
+border-radius:12px;
+margin:10px 0;
+max-width:70%;
+line-height:1.5;
+}
+
+/* USER MESSAGE */
+.user-msg{
+background:#ffb703;
+color:black;
+padding:12px 15px;
+border-radius:12px;
+margin:10px 0;
+margin-left:auto;
+max-width:70%;
+font-weight:500;
+}
+
+/* ================= INPUT (STEP 3 IMPROVED) ================= */
+
+.chat-input{
+display:flex;
+gap:10px;
+padding:15px;
+background:#0f172a;
+border-top:1px solid rgba(255,255,255,0.1);
+}
+
+.chat-input input{
+flex:1;
+padding:12px;
+border-radius:10px;
+border:none;
+outline:none;
+font-size:14px;
+}
+
+.chat-input input:focus{
+box-shadow:0 0 8px #ffb703;
+}
+
+.chat-input button{
+padding:10px 20px;
+border:none;
+background:#ffb703;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+transition:0.3s;
+}
+
+.chat-input button:hover{
+background:#fb8500;
+transform:scale(1.05);
+}
+
+/* ================= COMMON ================= */
+
+.login-page{
+margin-top:80px;
+padding:40px;
+text-align:center;
+}
+
+input, textarea{
+display:block;
+margin:10px auto;
+padding:10px;
+width:260px;
+border-radius:8px;
+border:none;
+}
+
+/* RESPONSIVE */
+@media (max-width:768px){
+
+.grid{
+grid-template-columns:repeat(2,1fr);
+}
+
+.navbar{
+flex-direction:column;
+height:auto;
+padding:10px;
+}
+
+.hero{
+margin-top:100px;
+}
+
+.hero h2{
+font-size:24px;
+}
+
+}
+
+/* WHATSAPP FLOATING BUTTON */
+.whatsapp-btn{
+position:fixed;
+bottom:20px;
+right:20px;
+background:#25D366;
+color:white;
+font-size:22px;
+padding:15px 18px;
+border-radius:50%;
+text-decoration:none;
+box-shadow:0 4px 15px rgba(0,0,0,0.4);
+z-index:999;
+transition:0.3s;
+}
+
+.whatsapp-btn:hover{
+transform:scale(1.1);
+background:#1ebe5d;
+}
+
+#totalBookings{
+margin-top:10px;
+font-weight:bold;
+color:#ffb703;
+}
+
+.item img{
+width:100%;
+height:180px;
+object-fit:cover;
+border-radius:10px;
+margin-bottom:10px;
+}
+
+.item{
+overflow:hidden;
+}
+
+.item img{
+transition:0.3s;
+}
+
+.item:hover img{
+transform:scale(1.1);
+}

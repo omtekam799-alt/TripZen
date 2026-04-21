@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book a Trip — TripZen</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#ffb703;--gold-dark:#e09800;--bg:#080c14;--bg2:#0d1422;--bg3:#111927;--surface:rgba(255,255,255,0.04);--border:rgba(255,255,255,0.07);--text:#f0ede8;--muted:#7a8499;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:0.6;}
+.navbar{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:72px;background:rgba(8,12,20,0.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
+.logo-text{font-family:'Playfair Display',serif;font-size:22px;color:var(--text);text-decoration:none;}
+.logo-text span{color:var(--gold);}
+nav{display:flex;gap:36px;align-items:center;}
+nav a{color:var(--muted);text-decoration:none;font-size:14px;transition:color 0.2s;}
+nav a:hover{color:var(--text);}
+nav a.cta{color:#080c14;background:var(--gold);padding:8px 20px;border-radius:100px;font-weight:500;}
+.page-wrap{max-width:1000px;margin:0 auto;padding:120px 48px 80px;position:relative;z-index:1;}
+.page-label{font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;display:block;}
+.page-title{font-family:'Playfair Display',serif;font-size:40px;margin-bottom:8px;}
+.page-title em{font-style:italic;color:var(--gold);}
+.page-sub{font-size:15px;color:var(--muted);margin-bottom:48px;}
+.steps{display:flex;align-items:center;margin-bottom:48px;}
+.step{display:flex;align-items:center;gap:10px;}
+.step-num{width:32px;height:32px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:var(--muted);transition:all 0.3s;flex-shrink:0;}
+.step-num.active{background:var(--gold);color:#080c14;border-color:var(--gold);}
+.step-num.done{background:rgba(74,222,128,0.15);border-color:rgba(74,222,128,0.3);color:#4ade80;}
+.step-label{font-size:13px;color:var(--muted);}
+.step-label.active{color:var(--text);}
+.step-line{flex:1;height:1px;background:var(--border);margin:0 16px;}
+.form-card{background:var(--bg2);border:1px solid var(--border);border-radius:24px;padding:36px;}
+.form-section-title{font-size:13px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);margin-bottom:20px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;}
+.form-group{display:flex;flex-direction:column;gap:8px;}
+.form-group.full{grid-column:1/-1;}
+.form-label{font-size:12px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);}
+.form-input,.form-select{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:13px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color 0.2s,box-shadow 0.2s;width:100%;}
+.form-input:focus,.form-select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(255,183,3,0.08);}
+.form-input::placeholder{color:var(--muted);}
+.form-select option{background:var(--bg2);}
+.divider{border:none;border-top:1px solid var(--border);margin:28px 0;}
+.pkg-picker{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.pkg-option{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:16px;cursor:pointer;transition:all 0.2s;}
+.pkg-option:hover{border-color:rgba(255,183,3,0.3);}
+.pkg-option.selected{border-color:var(--gold);background:rgba(255,183,3,0.05);}
+.pkg-option-emoji{font-size:24px;margin-bottom:8px;}
+.pkg-option-name{font-size:13px;font-weight:500;margin-bottom:3px;}
+.pkg-option-meta{font-size:11px;color:var(--muted);}
+.pkg-option-price{font-size:14px;font-weight:500;color:var(--gold);margin-top:6px;}
+.summary-card{background:var(--bg3);border:1px solid rgba(255,183,3,0.15);border-radius:16px;padding:24px;}
+.summary-row{display:flex;justify-content:space-between;font-size:14px;padding:8px 0;border-bottom:1px solid var(--border);}
+.summary-row:last-child{border-bottom:none;}
+.summary-row .lbl{color:var(--muted);}
+.summary-total{display:flex;justify-content:space-between;align-items:center;font-size:18px;font-weight:500;padding-top:16px;margin-top:8px;border-top:2px solid rgba(255,183,3,0.2);}
+.summary-total .amt{color:var(--gold);font-size:24px;}
+.btn-row{display:flex;gap:12px;margin-top:28px;}
+.btn-primary{background:var(--gold);color:#080c14;border:none;padding:15px 32px;border-radius:100px;font-size:15px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;flex:1;}
+.btn-primary:hover{background:var(--gold-dark);transform:translateY(-2px);}
+.btn-primary:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
+.btn-secondary{background:transparent;color:var(--text);border:1px solid var(--border);padding:15px 28px;border-radius:100px;font-size:15px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.btn-secondary:hover{border-color:var(--gold);color:var(--gold);}
+.step-panel{display:none;}
+.step-panel.active{display:block;}
+.success-wrap{text-align:center;padding:48px 20px;}
+.success-icon{font-size:72px;margin-bottom:24px;}
+.success-title{font-family:'Playfair Display',serif;font-size:36px;margin-bottom:12px;}
+.success-sub{font-size:16px;color:var(--muted);margin-bottom:32px;line-height:1.7;}
+.booking-ref{display:inline-block;background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.2);color:#4ade80;padding:10px 24px;border-radius:100px;font-size:14px;font-weight:500;letter-spacing:0.06em;margin-bottom:32px;}
+.success-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);padding:12px 24px;border-radius:100px;font-size:14px;font-weight:500;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none;}
+.toast.show{opacity:1;}
+.toast.err{background:rgba(248,113,113,0.15);border:1px solid rgba(248,113,113,0.3);color:#f87171;}
+.toast.ok{background:rgba(74,222,128,0.15);border:1px solid rgba(74,222,128,0.3);color:#4ade80;}
+@media(max-width:900px){.navbar{padding:0 20px;}nav a:not(.cta){display:none;}.page-wrap{padding:100px 20px 60px;}.pkg-picker{grid-template-columns:repeat(2,1fr);}.form-grid,.form-grid-3{grid-template-columns:1fr;}.form-group.full{grid-column:1;}}
+</style>
+</head>
+<body>
+<header class="navbar">
+  <a href="index.html" class="logo-text">Trip<span>Zen</span></a>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="packages.html">Packages</a>
+    <a href="ai-planner.html">Zeno AI</a>
+    <a href="contact.html">Contact</a>
+    <a href="login.html" class="cta" id="navLoginBtn">Login</a>
+  </nav>
+</header>
+
+<div class="page-wrap">
+  <span class="page-label">✈ Start Planning</span>
+  <h1 class="page-title">Book Your <em>Dream Trip</em></h1>
+  <p class="page-sub">Fill in the details below and confirm your booking in 3 easy steps.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num active" id="snum1">1</div>
+      <div class="step-label active" id="slbl1">Choose Package</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step">
+      <div class="step-num" id="snum2">2</div>
+      <div class="step-label" id="slbl2">Traveller Details</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step">
+      <div class="step-num" id="snum3">3</div>
+      <div class="step-label" id="slbl3">Review & Pay</div>
+    </div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step-panel active" id="panel1">
+    <div class="form-card">
+      <div class="form-section-title">🌍 Select a Package</div>
+      <div class="pkg-picker" id="pkgPicker"></div>
+      <hr class="divider">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Travel Date</label>
+          <input type="date" class="form-input" id="travelDate">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Return Date</label>
+          <input type="date" class="form-input" id="returnDate">
+        </div>
+        <div class="form-group">
+          <label class="form-label">No. of Adults</label>
+          <select class="form-select" id="adults">
+            <option value="1">1 Adult</option>
+            <option value="2" selected>2 Adults</option>
+            <option value="3">3 Adults</option>
+            <option value="4">4 Adults</option>
+            <option value="5">5+ Adults</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">No. of Children</label>
+          <select class="form-select" id="children">
+            <option value="0" selected>No Children</option>
+            <option value="1">1 Child</option>
+            <option value="2">2 Children</option>
+            <option value="3">3 Children</option>
+          </select>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-primary" onclick="goStep2()">Continue →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step-panel" id="panel2">
+    <div class="form-card">
+      <div class="form-section-title">👤 Lead Traveller</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-input" id="tName" placeholder="As on ID / Passport">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <input type="tel" class="form-input" id="tPhone" placeholder="10-digit mobile">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-input" id="tEmail" placeholder="Confirmation will be sent here">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Age</label>
+          <input type="number" class="form-input" id="tAge" placeholder="Age" min="18" max="99">
+        </div>
+      </div>
+      <hr class="divider">
+      <div class="form-section-title">🏨 Preferences</div>
+      <div class="form-grid-3">
+        <div class="form-group">
+          <label class="form-label">Room Type</label>
+          <select class="form-select" id="roomType">
+            <option>Standard Room</option>
+            <option>Deluxe Room</option>
+            <option>Suite</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Meal Plan</label>
+          <select class="form-select" id="mealPlan">
+            <option>Breakfast Only</option>
+            <option>Breakfast + Dinner</option>
+            <option>All Inclusive</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Transport</label>
+          <select class="form-select" id="transport">
+            <option>Self Arranged</option>
+            <option>TripZen Cab</option>
+            <option>Flight + Cab</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Special Requests</label>
+          <input type="text" class="form-input" id="specialReq" placeholder="e.g. Wheelchair access, vegetarian meals, anniversary setup...">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-secondary" onclick="showPanel(1)">← Back</button>
+        <button class="btn-primary" onclick="goStep3()">Review Booking →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step-panel" id="panel3">
+    <div class="form-card">
+      <div class="form-section-title">📋 Booking Summary</div>
+      <div class="summary-card" id="summaryBox"></div>
+      <hr class="divider">
+      <div class="form-section-title">💳 Payment</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Payment Method</label>
+          <select class="form-select" id="payMethod">
+            <option>Razorpay (UPI / Card / Net Banking)</option>
+            <option>Pay Later (10% advance now)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Coupon Code</label>
+          <input type="text" class="form-input" id="couponCode" placeholder="e.g. TRIPZEN10">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-secondary" onclick="showPanel(2)">← Back</button>
+        <button class="btn-primary" id="confirmBtn" onclick="confirmBooking()">Confirm & Pay ₹<span id="finalAmt">0</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="step-panel" id="panelSuccess">
+    <div class="form-card">
+      <div class="success-wrap">
+        <div class="success-icon">🎉</div>
+        <h2 class="success-title">Booking Confirmed!</h2>
+        <p class="success-sub">Your trip has been booked successfully.<br>A confirmation has been sent to your email and WhatsApp.</p>
+        <div class="booking-ref" id="bookingRef">REF: TZ-000000</div>
+        <div class="success-actions">
+          <a href="profile.html"><button class="btn-primary" style="width:auto;padding:14px 28px;">View My Bookings</button></a>
+          <a href="packages.html"><button class="btn-secondary" style="padding:14px 28px;">Explore More</button></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = "http://localhost:5000";
+const PKGS = [
+  {_id:"goa",name:"Goa Tour",duration:"3D/2N",price:7999,emoji:"🌴",tag:"Beach"},
+  {_id:"manali",name:"Manali Trip",duration:"5D/4N",price:12999,emoji:"🏔",tag:"Mountains"},
+  {_id:"bali",name:"Bali Escape",duration:"6D/5N",price:49999,emoji:"🏝",tag:"International"},
+  {_id:"dubai",name:"Dubai Tour",duration:"5D/4N",price:39999,emoji:"🏙",tag:"International"},
+  {_id:"kerala",name:"Kerala Backwaters",duration:"4D/3N",price:14999,emoji:"🌿",tag:"Honeymoon"},
+  {_id:"shimla",name:"Shimla-Manali",duration:"7D/6N",price:18999,emoji:"⛄",tag:"Mountains"},
+  {_id:"thailand",name:"Thailand Adventure",duration:"7D/6N",price:54999,emoji:"🐘",tag:"International"},
+  {_id:"rajasthan",name:"Royal Rajasthan",duration:"6D/5N",price:22999,emoji:"🏰",tag:"Heritage"},
+];
+let sel = null;
+
+window.onload = function() {
+  if (!localStorage.getItem("token")) {
+    showToast("Please login first!", "err");
+    setTimeout(() => window.location.href = "login.html", 1500);
+    return;
+  }
+  updateNav();
+  document.getElementById("pkgPicker").innerHTML = PKGS.map(p =>
+    `<div class="pkg-option" id="pkg_${p._id}" onclick='selPkg(${JSON.stringify(p)})'>
+      <div class="pkg-option-emoji">${p.emoji}</div>
+      <div class="pkg-option-name">${p.name}</div>
+      <div class="pkg-option-meta">${p.duration} · ${p.tag}</div>
+      <div class="pkg-option-price">₹${p.price.toLocaleString('en-IN')}</div>
+    </div>`).join('');
+  const today = new Date().toISOString().split("T")[0];
+  document.getElementById("travelDate").min = today;
+  document.getElementById("returnDate").min = today;
+  const params = new URLSearchParams(window.location.search);
+  const pre = params.get("id");
+  if (pre) { const f = PKGS.find(p => p._id === pre); if(f) selPkg(f); }
+};
+
+function updateNav() {
+  const n = localStorage.getItem("userName"), btn = document.getElementById("navLoginBtn");
+  if (btn && localStorage.getItem("token")) { btn.textContent = n ? n.split(" ")[0] : "Profile"; btn.href = "profile.html"; }
+}
+
+function selPkg(p) {
+  sel = p;
+  document.querySelectorAll(".pkg-option").forEach(e => e.classList.remove("selected"));
+  document.getElementById("pkg_" + p._id)?.classList.add("selected");
+}
+
+function goStep2() {
+  if (!sel) return showToast("Please select a package","err");
+  if (!document.getElementById("travelDate").value) return showToast("Please select a travel date","err");
+  showPanel(2);
+}
+
+function goStep3() {
+  const n=document.getElementById("tName").value.trim(), p=document.getElementById("tPhone").value.trim(), e=document.getElementById("tEmail").value.trim();
+  if (!n||!p||!e) return showToast("Please fill all required fields","err");
+  if (!/^\d{10}$/.test(p)) return showToast("Enter valid 10-digit phone number","err");
+  const adults=parseInt(document.getElementById("adults").value), children=parseInt(document.getElementById("children").value);
+  const total = sel.price * adults;
+  document.getElementById("finalAmt").textContent = total.toLocaleString('en-IN');
+  document.getElementById("summaryBox").innerHTML = `
+    <div class="summary-row"><span class="lbl">Package</span><span>${sel.emoji} ${sel.name}</span></div>
+    <div class="summary-row"><span class="lbl">Duration</span><span>${sel.duration}</span></div>
+    <div class="summary-row"><span class="lbl">Travel Date</span><span>${document.getElementById("travelDate").value}</span></div>
+    <div class="summary-row"><span class="lbl">Travellers</span><span>${adults} Adult${adults>1?'s':''}${children>0?' + '+children+' Child':''}</span></div>
+    <div class="summary-row"><span class="lbl">Lead Traveller</span><span>${n}</span></div>
+    <div class="summary-row"><span class="lbl">Contact</span><span>${p} | ${e}</span></div>
+    <div class="summary-row"><span class="lbl">Room / Meals</span><span>${document.getElementById("roomType").value} · ${document.getElementById("mealPlan").value}</span></div>
+    <div class="summary-row"><span class="lbl">Price / person</span><span>₹${sel.price.toLocaleString('en-IN')}</span></div>
+    <div class="summary-total"><span>Total Amount</span><span class="amt">₹${total.toLocaleString('en-IN')}</span></div>`;
+  showPanel(3);
+}
+
+async function confirmBooking() {
+  const btn=document.getElementById("confirmBtn");
+  btn.disabled=true; btn.textContent="Processing...";
+  const adults=parseInt(document.getElementById("adults").value), total=sel.price*adults;
+  const bd={packageId:sel._id,packageName:sel.name,price:total,travelDate:document.getElementById("travelDate").value,returnDate:document.getElementById("returnDate").value,travellers:{adults,children:parseInt(document.getElementById("children").value)},name:document.getElementById("tName").value.trim(),phone:document.getElementById("tPhone").value.trim(),email:document.getElementById("tEmail").value.trim(),roomType:document.getElementById("roomType").value,mealPlan:document.getElementById("mealPlan").value,transport:document.getElementById("transport").value,specialReq:document.getElementById("specialReq").value};
+  try {
+    const r=await fetch(`${API}/api/bookings`,{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+localStorage.getItem("token")},body:JSON.stringify(bd)});
+    const d=await r.json();
+    if(r.ok){showSuccess(d._id||d.booking?._id);}else{saveLocal(bd);showSuccess();}
+  } catch {saveLocal(bd);showSuccess();}
+}
+
+function saveLocal(d) {
+  const b=JSON.parse(localStorage.getItem("bookings")||"[]");
+  b.unshift({...d,_id:"TZ-"+Date.now(),status:"Confirmed",createdAt:new Date().toISOString()});
+  localStorage.setItem("bookings",JSON.stringify(b));
+}
+
+function showSuccess(id) {
+  document.getElementById("bookingRef").textContent="REF: TZ-"+(id||Date.now().toString().slice(-6));
+  document.getElementById("panelSuccess").classList.add("active");
+  document.querySelectorAll(".step-panel:not(#panelSuccess)").forEach(p=>p.classList.remove("active"));
+  for(let i=1;i<=3;i++){document.getElementById("snum"+i).classList.add("done");document.getElementById("snum"+i).textContent="✓";}
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function showPanel(n) {
+  document.querySelectorAll(".step-panel").forEach(p=>p.classList.remove("active"));
+  document.getElementById("panel"+n).classList.add("active");
+  for(let i=1;i<=3;i++){
+    const num=document.getElementById("snum"+i), lbl=document.getElementById("slbl"+i);
+    num.classList.remove("active","done"); lbl.classList.remove("active");
+    if(i<n){num.classList.add("done");num.textContent="✓";}
+    else if(i==n){num.classList.add("active");lbl.classList.add("active");num.textContent=i;}
+    else{num.textContent=i;}
+  }
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function showToast(msg,type) {
+  const t=document.getElementById("toast");
+  t.textContent=msg; t.className="toast show "+type;
+  setTimeout(()=>t.classList.remove("show"),3000);
+}
+</script>
+</body>
+</html>
